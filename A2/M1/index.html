@@ -10,67 +10,70 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #F1EEE3;
-    --paper-raised: #E9E4D4;
-    --ink: #202B31;
-    --ink-soft: #4B565C;
-    --ochre: #C68A1F;
-    --ochre-deep: #9C6B15;
-    --moss: #4B6355;
-    --moss-deep: #37493E;
-    --rule: #C9C1A9;
-    --white: #FBFAF6;
-    --danger: #A3432E;
+    --bg: #FFFFFF;
+    --text: #031e3b;
+    --text-soft: rgba(3, 30, 59, 0.78);
+    --rule: rgba(3, 30, 59, 0.2);
+    --magenta: #9b257d;
+    --yellow: #ffd840;
+    --blue: #064383;
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper: #1B2126;
-      --paper-raised: #232A30;
-      --ink: #EDEAE0;
-      --ink-soft: #B7BCB8;
-      --rule: #3A423F;
-      --white: #262D32;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #1B2126;
-    --paper-raised: #232A30;
-    --ink: #EDEAE0;
-    --ink-soft: #B7BCB8;
-    --rule: #3A423F;
-    --white: #262D32;
   }
   html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--bg);
+    color: var(--text);
     font-family: "Source Sans 3", -apple-system, "Segoe UI", sans-serif;
     font-size: 17px;
     line-height: 1.55;
   }
-  h1, h2, h3, .stencil {
+  h1, h2, h3 {
     font-family: "Barlow Condensed", sans-serif;
     font-weight: 700;
     letter-spacing: 0.01em;
     line-height: 1.02;
     margin: 0;
+    color: var(--text);
   }
   a { color: inherit; }
   .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
 
-  /* ---------- Header band ---------- */
-  header.band {
-    background: var(--ink);
-    color: var(--paper);
-    padding: env(safe-area-inset-top, 0px) 0 0 0;
-    border-bottom: 6px solid var(--ochre);
+
+  /* ---------- Aviso ---------- */
+  .notice {
+    background: var(--yellow);
+    color: var(--text);
+    border-bottom: 3px solid var(--magenta);
+    padding: 12px 0;
+    font-size: 16px;
+    line-height: 1.4;
   }
-  header.band .inner { padding: 52px 24px 40px; }
+  .notice .wrap { display: flex; gap: 14px; align-items: center; }
+  .notice-icon {
+    flex: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--yellow);
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .notice p { margin: 0; }
+  .notice strong { font-weight: 700; }
+
+  /* ---------- Header ---------- */
+  header.band {
+    background: var(--text);
+    color: #FFFFFF;
+    border-bottom: 8px solid var(--yellow);
+  }
+  header.band .inner { padding: 48px 24px 40px; }
   .brand-row {
     display: flex;
     align-items: baseline;
@@ -82,47 +85,38 @@
   .brand-name {
     font-family: "Barlow Condensed", sans-serif;
     font-weight: 700;
-    font-size: 22px;
-    color: var(--paper);
+    font-size: 24px;
+    color: #FFFFFF;
   }
-  .brand-name span { color: var(--ochre); }
+  .brand-name span { color: var(--yellow); }
   .count-tag {
     font-size: 14px;
-    color: var(--paper);
-    opacity: 0.75;
-    border: 1px solid rgba(241,238,227,0.35);
+    font-weight: 600;
+    color: var(--text);
+    background: var(--yellow);
     border-radius: 3px;
     padding: 4px 10px;
+  }
+  .headline-block {
+    border-left: 10px solid var(--magenta);
+    padding-left: 20px;
   }
   h1.headline {
     font-size: clamp(38px, 7.5vw, 62px);
     max-width: 13ch;
-    color: var(--paper);
-  }
-  h1.headline em {
-    font-style: normal;
-    color: var(--ochre);
+    color: #FFFFFF;
   }
   .sub {
-    margin-top: 18px;
+    margin-top: 20px;
     max-width: 46ch;
-    color: var(--paper);
-    opacity: 0.82;
+    color: #FFFFFF;
     font-size: 18px;
   }
 
   /* ---------- Listings ---------- */
-  main { background: var(--paper); }
   section.listings { padding: 44px 0 8px; }
-  .section-title {
-    font-size: 28px;
-    margin-bottom: 6px;
-  }
-  .section-note {
-    color: var(--ink-soft);
-    font-size: 15px;
-    margin-bottom: 28px;
-  }
+  .section-title { font-size: 30px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 4px solid var(--magenta); width: fit-content; }
+  .section-note { color: var(--text-soft); font-size: 15px; margin-bottom: 28px; }
   .job {
     border-top: 1px solid var(--rule);
     padding: 26px 0;
@@ -134,40 +128,36 @@
   .job:last-child { border-bottom: 1px solid var(--rule); }
   .job-tag {
     font-size: 14px;
-    color: var(--moss-deep);
-    background: var(--paper-raised);
-    border-left: 3px solid var(--moss);
-    padding: 5px 9px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--yellow);
+    padding: 5px 10px;
     display: inline-block;
     width: fit-content;
   }
-  .job-body h3 { font-size: 25px; margin-bottom: 6px; }
-  .job-desc { color: var(--ink-soft); font-size: 15.5px; max-width: 60ch; margin-bottom: 8px;}
-  .job-meta {
-    font-size: 14px;
-    color: var(--ink-soft);
-  }
-  .job-meta b { color: var(--ink); font-weight: 600; }
+  .job-body h3 { font-size: 26px; margin-bottom: 6px; }
+  .job-desc { color: var(--text-soft); font-size: 15.5px; max-width: 60ch; margin: 0 0 8px; }
+  .job-meta { font-size: 14px; color: var(--text-soft); margin: 0; }
+  .job-meta b { color: var(--magenta); font-weight: 700; }
   .apply-btn {
     justify-self: end;
     align-self: center;
     background: transparent;
-    border: 1.5px solid var(--ink);
-    color: var(--ink);
+    border: 1.5px solid var(--blue);
+    color: var(--blue);
     font-family: "Source Sans 3", sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 15px;
-    padding: 10px 16px;
+    padding: 10px 18px;
     border-radius: 3px;
     cursor: pointer;
     white-space: nowrap;
   }
-  .apply-btn:hover { background: var(--ink); color: var(--paper); }
+  .apply-btn:hover { background: var(--blue); color: #FFFFFF; }
   .apply-btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-    outline: 3px solid var(--ochre-deep);
+    outline: 3px solid var(--magenta);
     outline-offset: 2px;
   }
-
   @media (max-width: 620px) {
     .job { grid-template-columns: 1fr; }
     .apply-btn { justify-self: start; }
@@ -175,70 +165,59 @@
 
   /* ---------- Form ---------- */
   section.form-section {
-    background: var(--paper-raised);
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+    border-top: 8px solid var(--blue);
     padding: 52px 0 60px;
-    margin-top: 28px;
+    margin-top: 32px;
   }
   .form-intro { max-width: 54ch; margin-bottom: 32px; }
-  .form-intro h2 { font-size: 32px; margin-bottom: 10px; }
-  .form-intro p { color: var(--ink-soft); font-size: 16px; }
+  .form-intro h2 { font-size: 34px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 4px solid var(--yellow); width: fit-content; }
+  .form-intro p { color: var(--text-soft); font-size: 16px; margin: 0; }
 
   form { display: grid; gap: 18px; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
 
-  label {
-    display: block;
-    font-size: 14.5px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: var(--ink);
-  }
-  .req { color: var(--danger); }
-  .field small { display:block; color: var(--ink-soft); font-size: 12.5px; margin-top: 5px; }
+  label { display: block; font-size: 14.5px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .req { color: var(--magenta); }
+  .field small { display: block; color: var(--text-soft); font-size: 12.5px; margin-top: 5px; }
 
   input[type="text"], input[type="email"], input[type="tel"], select, textarea {
     width: 100%;
     font-family: inherit;
     font-size: 16px;
     padding: 11px 12px;
-    background: var(--white);
-    border: 1.5px solid var(--rule);
+    background: var(--bg);
+    border: 1.5px solid var(--text);
     border-radius: 3px;
-    color: var(--ink);
+    color: var(--text);
   }
   textarea { resize: vertical; min-height: 90px; }
 
   .file-field {
-    border: 1.5px dashed var(--rule);
+    border: 1.5px dashed var(--blue);
     border-radius: 3px;
-    background: var(--white);
+    background: var(--bg);
     padding: 14px;
   }
-  .file-field input[type="file"] {
-    width: 100%;
-    font-size: 14.5px;
-    font-family: inherit;
-    color: var(--ink-soft);
-  }
+  .file-field input[type="file"] { width: 100%; font-size: 14.5px; font-family: inherit; color: var(--text); }
 
   .submit-row { margin-top: 8px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .submit-btn {
-    background: var(--moss);
-    color: var(--white);
+    background: var(--blue);
+    color: #FFFFFF;
     border: none;
+    border-bottom: 5px solid var(--yellow);
     font-family: "Barlow Condensed", sans-serif;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 21px;
     letter-spacing: 0.01em;
-    padding: 14px 30px;
+    padding: 13px 30px 10px;
     border-radius: 3px;
     cursor: pointer;
   }
-  .submit-btn:hover { background: var(--moss-deep); }
-  .submit-note { font-size: 13.5px; color: var(--ink-soft); max-width: 32ch; }
+  .submit-btn:hover { background: var(--text); }
+  .submit-note { font-size: 13.5px; color: var(--text-soft); max-width: 32ch; margin: 0; }
 
   .form-status {
     margin-top: 6px;
@@ -248,18 +227,27 @@
     display: none;
   }
   .form-status.show { display: block; }
-  .form-status.error { background: #F3E1DB; color: var(--danger); border: 1px solid var(--danger); }
+  .form-status.error { color: var(--magenta); border: 1.5px solid var(--magenta); background: #FFFFFF; }
 
   /* ---------- Footer ---------- */
   footer {
-    padding: 34px 0 calc(34px + env(safe-area-inset-bottom, 0px));
-    color: var(--ink-soft);
+    background: var(--blue);
+    color: #FFFFFF;
+    padding: 30px 0 calc(30px + env(safe-area-inset-bottom, 0px));
     font-size: 13.5px;
+    border-top: 8px solid var(--yellow);
   }
-  footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 20px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
+
+<div class="notice" role="note">
+  <div class="wrap">
+    <span class="notice-icon" aria-hidden="true">!</span>
+    <p><strong>Atención: estas ofertas de trabajo son falsas.</strong> Esta página es solo un ejercicio para las clases de español. No son puestos reales.</p>
+  </div>
+</div>
 
 <header class="band">
   <div class="wrap inner">
@@ -267,7 +255,7 @@
       <div class="brand-name">Manos <span>a la Obra</span></div>
       <div class="count-tag">8 ofertas abiertas ahora mismo</div>
     </div>
-    <h1 class="headline">Oficios que hacen falta.<br>Gente dispuesta a <em>hacerlos</em>.</h1>
+    <div class="headline-block"><h1 class="headline">Oficios que hacen falta.<br>Gente dispuesta a hacerlos.</h1></div>
     <p class="sub">Ponemos en contacto a personas que buscan trabajo con casas, comunidades, obras y negocios que necesitan una mano. Sin intermediarios raros, sin letra pequeña.</p>
   </div>
 </header>
@@ -445,7 +433,7 @@
 <footer>
   <div class="wrap">
     <span>Manos a la Obra — bolsa de empleo</span>
-    <span>Página de ejemplo, ficticia</span>
+    <span>Ofertas falsas para clases de español</span>
   </div>
 </footer>
 
