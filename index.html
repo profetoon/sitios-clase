@@ -11,10 +11,10 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Source Sans 3 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -32,7 +32,7 @@
             }
           },
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['"Source Sans 3"', '"Source Sans Pro"', 'sans-serif'],
           }
         }
       }
@@ -43,7 +43,7 @@
     body {
       background-color: #ffffff;
       color: #031e3b;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Source Sans 3', 'Source Sans Pro', sans-serif;
     }
 
     .card-hover {
@@ -51,66 +51,19 @@
     }
     .card-hover:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 24px -8px rgba(3, 30, 59, 0.12);
+      box-shadow: 0 12px 24px -8px rgba(3, 30, 59, 0.15);
     }
 
     .accent-bar-1 { border-top: 4px solid #9b257d; }
     .accent-bar-2 { border-top: 4px solid #ffd840; }
     .accent-bar-3 { border-top: 4px solid #064383; }
 
-    /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #064383; border-radius: 4px; }
   </style>
-
-  <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body class="min-h-screen flex flex-col bg-white text-[#031e3b]">
-
-  <!-- ==================== PANTALLA DE LOGIN ==================== -->
-  <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#031e3b]/95 backdrop-blur-md">
-    <div class="bg-white rounded-3xl p-8 md:p-10 max-w-md w-full shadow-2xl border border-brand-border text-center relative overflow-hidden">
-      <!-- Decorative top line -->
-      <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#9b257d] via-[#ffd840] to-[#064383]"></div>
-      
-      <div class="w-16 h-16 bg-[#064383]/10 text-[#064383] rounded-2xl flex items-center justify-center mx-auto mb-6">
-        <i data-lucide="layout-grid" class="w-8 h-8"></i>
-      </div>
-
-      <h1 class="text-3xl font-extrabold text-[#031e3b] mb-2">Bienvenido</h1>
-      <p class="text-slate-600 mb-8 text-sm">Accede para gestionar tus módulos y actividades personalizadas.</p>
-
-      <div class="space-y-4">
-        <button id="googleLoginBtn" class="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 text-[#031e3b] font-semibold py-3.5 px-4 rounded-xl hover:bg-slate-50 transition shadow-sm hover:border-[#064383]">
-          <svg class="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          Continuar con Google
-        </button>
-
-        <div class="flex items-center my-4">
-          <div class="flex-1 border-t border-slate-200"></div>
-          <span class="px-3 text-xs text-slate-400 font-medium uppercase">o acceso directo</span>
-          <div class="flex-1 border-t border-slate-200"></div>
-        </div>
-
-        <button id="guestLoginBtn" class="w-full bg-[#064383] hover:bg-[#031e3b] text-white font-semibold py-3.5 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2">
-          <i data-lucide="user-check" class="w-5 h-5"></i>
-          Acceder como Administrador
-        </button>
-      </div>
-
-      <p class="text-xs text-slate-400 mt-8">
-        Si usas Google, recuerda configurar tus credenciales de Firebase en el código HTML.
-      </p>
-    </div>
-  </div>
 
   <!-- ==================== HEADER PRINCIPAL ==================== -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
@@ -122,26 +75,24 @@
           <i data-lucide="folder-tree" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="text-xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
-          <p class="text-xs text-slate-500 font-medium">Estructura limpia y organizada</p>
+          <h1 class="text-2xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Visualización pública</p>
         </div>
       </div>
 
-      <!-- BOTONES DE ACCION & USUARIO -->
+      <!-- BOTONES DE ACCIONES Y MODO ADMIN -->
       <div class="flex items-center gap-3">
-        <button id="newCardBtn" class="hidden sm:flex items-center gap-2 bg-[#9b257d] hover:bg-[#801e66] text-white font-semibold px-4 py-2.5 rounded-xl transition shadow-sm text-sm">
+        <!-- Botón para añadir carta (solo visible si es Admin) -->
+        <button id="newCardBtn" class="hidden items-center gap-2 bg-[#9b257d] hover:bg-[#801e66] text-white font-bold px-4 py-2 rounded-xl transition shadow-sm text-sm">
           <i data-lucide="plus" class="w-4 h-4"></i>
           Nueva Carta
         </button>
 
-        <div id="userInfo" class="flex items-center gap-3 pl-3 border-l border-slate-200">
-          <div id="userAvatar" class="w-9 h-9 rounded-full bg-[#ffd840] text-[#031e3b] font-bold flex items-center justify-center text-sm border-2 border-[#031e3b]">
-            U
-          </div>
-          <button id="logoutBtn" class="p-2 text-slate-400 hover:text-[#9b257d] hover:bg-slate-100 rounded-lg transition" title="Cerrar sesión">
-            <i data-lucide="log-out" class="w-5 h-5"></i>
-          </button>
-        </div>
+        <!-- Botón de Estado Admin -->
+        <button id="adminLoginBtn" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-[#031e3b] font-bold px-4 py-2 rounded-xl transition text-sm border border-slate-200">
+          <i data-lucide="lock" class="w-4 h-4 text-[#064383]"></i>
+          <span id="adminBtnText">Acceso Admin</span>
+        </button>
       </div>
 
     </div>
@@ -151,28 +102,28 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
     <!-- MIGA DE PAN (BREADCRUMBS) -->
-    <nav id="breadcrumbs" class="flex items-center gap-2 mb-8 text-sm font-medium overflow-x-auto pb-2">
+    <nav id="breadcrumbs" class="flex items-center gap-2 mb-8 text-base font-semibold overflow-x-auto pb-2">
       <!-- Generado dinámicamente -->
     </nav>
 
-    <!-- BARRA SUPERIOR DE ACCIONES -->
+    <!-- BARRA SUPERIOR DE LA CARPETA ACTUAL -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
-        <h2 id="currentFolderTitle" class="text-2xl font-extrabold text-[#031e3b] flex items-center gap-3">
+        <h2 id="currentFolderTitle" class="text-3xl font-extrabold text-[#031e3b] flex items-center gap-3">
           <!-- Titulo actual dinámico -->
         </h2>
-        <p id="currentFolderDesc" class="text-slate-500 text-sm mt-1">Explora las actividades organizadas a continuación.</p>
+        <p id="currentFolderDesc" class="text-slate-600 text-base mt-1">Explora las actividades y contenidos organizados a continuación.</p>
       </div>
 
-      <div class="flex items-center gap-2 self-start sm:self-auto">
-        <button id="mobileNewCardBtn" class="sm:hidden flex items-center gap-2 bg-[#9b257d] text-white font-semibold px-4 py-2 rounded-xl text-sm">
+      <div class="flex items-center gap-2">
+        <button id="mobileNewCardBtn" class="hidden sm:hidden items-center gap-2 bg-[#9b257d] text-white font-bold px-4 py-2 rounded-xl text-sm">
           <i data-lucide="plus" class="w-4 h-4"></i>
           Nueva Carta
         </button>
       </div>
     </div>
 
-    <!-- GRID DE CARTAS / ACTIVIDADES -->
+    <!-- GRID DE CARTAS -->
     <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Las cartas se insertan dinámicamente -->
     </div>
@@ -182,13 +133,40 @@
       <div class="w-12 h-12 bg-[#ffd840]/30 text-[#031e3b] rounded-full flex items-center justify-center mx-auto mb-3">
         <i data-lucide="layers" class="w-6 h-6"></i>
       </div>
-      <h3 class="text-lg font-bold text-[#031e3b]">No hay elementos aquí</h3>
-      <p class="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Esta carpeta está vacía. Haz clic en "Nueva Carta" para empezar a organizar.</p>
+      <h3 class="text-xl font-bold text-[#031e3b]">No hay elementos aquí</h3>
+      <p class="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Esta sección está vacía por el momento.</p>
     </div>
 
   </main>
 
-  <!-- ==================== MODAL DE DETALLES Y CONTENIDO DE LA ACTIVIDAD ==================== -->
+  <!-- ==================== MODAL DE LOGIN ADMIN ==================== -->
+  <div id="adminModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-brand-border relative text-center">
+      <button id="closeAdminModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-[#031e3b] p-1 rounded-full hover:bg-slate-100">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="w-12 h-12 bg-[#064383]/10 text-[#064383] rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="shield-check" class="w-6 h-6"></i>
+      </div>
+
+      <h3 class="text-xl font-extrabold text-[#031e3b] mb-1">Acceso Administrador</h3>
+      <p class="text-xs text-slate-500 mb-6">Introduce la clave para editar contenidos.</p>
+
+      <form id="adminForm" class="space-y-4">
+        <div>
+          <input type="password" id="adminPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm text-center" placeholder="Clave de administrador">
+        </div>
+        <p id="adminError" class="text-xs text-red-600 hidden font-semibold">Clave incorrecta</p>
+        
+        <button type="submit" class="w-full bg-[#064383] hover:bg-[#031e3b] text-white font-bold py-2.5 rounded-xl transition text-sm">
+          Entrar como Admin
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE DETALLES DE ACTIVIDAD ==================== -->
   <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-brand-border relative max-h-[90vh] overflow-y-auto">
       <button id="closeDetailBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
@@ -200,13 +178,13 @@
       
       <h2 id="modalTitle" class="text-2xl font-extrabold text-[#031e3b] mt-1 mb-4">Título de la Actividad</h2>
       
-      <div class="bg-slate-50 rounded-2xl p-4 sm:p-6 text-slate-700 leading-relaxed mb-6 border border-slate-100 text-sm sm:text-base" id="modalDescription">
+      <div class="bg-slate-50 rounded-2xl p-4 sm:p-6 text-slate-700 leading-relaxed mb-6 border border-slate-100 text-base" id="modalDescription">
         <!-- Descripción de la actividad -->
       </div>
 
       <!-- Enlace externo si existe -->
       <div id="modalLinkContainer" class="hidden mb-6">
-        <a id="modalLink" href="#" target="_blank" class="inline-flex items-center gap-2 bg-[#064383] text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-[#031e3b] transition text-sm">
+        <a id="modalLink" href="#" target="_blank" class="inline-flex items-center gap-2 bg-[#064383] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#031e3b] transition text-sm">
           <i data-lucide="external-link" class="w-4 h-4"></i>
           Abrir Enlace o Recurso
         </a>
@@ -236,14 +214,14 @@
           <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-2">Tipo de Carta</label>
           <div class="grid grid-cols-2 gap-3">
             <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 border-slate-200">
-              <input type="radio" name="cardType" value="folder" checked class="text-[#064383] focus:ring-[#064383]">
+              <input type="radio" name="cardType" value="folder" checked class="text-[#064383]">
               <i data-lucide="folder" class="w-4 h-4 text-[#064383]"></i>
-              <span class="text-sm font-semibold">Carpeta / Módulo</span>
+              <span class="text-sm font-bold">Carpeta / Módulo</span>
             </label>
             <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 border-slate-200">
-              <input type="radio" name="cardType" value="activity" class="text-[#9b257d] focus:ring-[#9b257d]">
+              <input type="radio" name="cardType" value="activity" class="text-[#9b257d]">
               <i data-lucide="file-text" class="w-4 h-4 text-[#9b257d]"></i>
-              <span class="text-sm font-semibold">Actividad</span>
+              <span class="text-sm font-bold">Actividad</span>
             </label>
           </div>
         </div>
@@ -255,17 +233,17 @@
 
         <div>
           <label for="cardCategory" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Categoría / Subtítulo</label>
-          <input type="text" id="cardCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Ej. Teórico, Ejercicio, Tarea...">
+          <input type="text" id="cardCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Ej. Teórico, Ejercicio...">
         </div>
 
         <div>
           <label for="cardDesc" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Explicación o Descripción</label>
-          <textarea id="cardDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Escribe aquí de qué trata esta actividad..."></textarea>
+          <textarea id="cardDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Escribe aquí la explicación..."></textarea>
         </div>
 
         <div>
           <label for="cardColor" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Color Destacado</label>
-          <select id="cardColor" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm">
+          <select id="cardColor" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm font-semibold">
             <option value="accent1">Púrpura Magenta (#9b257d)</option>
             <option value="accent2">Amarillo (#ffd840)</option>
             <option value="accent3" selected>Azul (#064383)</option>
@@ -278,7 +256,7 @@
         </div>
 
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-          <button type="button" id="cancelCardBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-semibold transition">
+          <button type="button" id="cancelCardBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold transition">
             Cancelar
           </button>
           <button type="submit" class="px-5 py-2.5 bg-[#064383] hover:bg-[#031e3b] text-white font-bold rounded-xl text-sm transition shadow-sm">
@@ -291,34 +269,17 @@
 
   <!-- FOOTER -->
   <footer class="bg-white border-t border-slate-200 py-6 mt-12">
-    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
-      Organizador de Actividades y Módulos &bull; Fondo Blanco, Texto #031e3b, Acentos (#9b257d, #ffd840, #064383)
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-semibold">
+      Organizador de Actividades &bull; Fuente: Source Sans &bull; Colores: #031e3b, #9b257d, #ffd840, #064383
     </div>
   </footer>
 
   <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
   <script>
-    // Configuración opcional de Firebase (Descomentar y rellenar para Google Login real)
-    const firebaseConfig = {
-      apiKey: "TU_API_KEY_AQUI",
-      authDomain: "TU_PROYECTO.firebaseapp.com",
-      projectId: "TU_PROYECTO",
-      storageBucket: "TU_PROYECTO.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef"
-    };
+    // Clave de administrador (puedes modificarla aquí)
+    const ADMIN_PASSWORD = "admin123";
 
-    let isFirebaseConfigured = false;
-    try {
-      if (firebaseConfig.apiKey !== "TU_API_KEY_AQUI") {
-        firebase.initializeApp(firebaseConfig);
-        isFirebaseConfigured = true;
-      }
-    } catch(e) {
-      console.log("Firebase no configurado, utilizando acceso directo.");
-    }
-
-    // BASE DE DATOS EN MEMORIA / LOCALSTORAGE
+    // DATOS DE EJEMPLO
     const DEFAULT_DATA = [
       {
         id: 'root-1',
@@ -361,18 +322,20 @@
 
     // ESTADO DE LA APLICACIÓN
     let appState = {
-      user: null,
+      isAdmin: localStorage.getItem('is_admin') === 'true',
       currentParentId: null,
       folderPath: [{ id: null, title: 'Inicio' }],
       items: JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA
     };
 
-    // ELEMENTOS DOM
-    const loginScreen = document.getElementById('loginScreen');
-    const googleLoginBtn = document.getElementById('googleLoginBtn');
-    const guestLoginBtn = document.getElementById('guestLoginBtn');
-    const userAvatar = document.getElementById('userAvatar');
-    const logoutBtn = document.getElementById('logoutBtn');
+    // ELEMENTOS DEL DOM
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const adminBtnText = document.getElementById('adminBtnText');
+    const adminModal = document.getElementById('adminModal');
+    const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
+    const adminForm = document.getElementById('adminForm');
+    const adminPasswordInput = document.getElementById('adminPassword');
+    const adminError = document.getElementById('adminError');
 
     const breadcrumbs = document.getElementById('breadcrumbs');
     const currentFolderTitle = document.getElementById('currentFolderTitle');
@@ -395,56 +358,56 @@
     // INICIALIZACIÓN
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      checkAuthStatus();
+      updateAdminUI();
       renderApp();
     });
 
-    // SISTEMA DE AUTENTICACIÓN
-    function checkAuthStatus() {
-      const savedUser = localStorage.getItem('logged_user');
-      if (savedUser) {
-        appState.user = JSON.parse(savedUser);
-        loginScreen.classList.add('hidden');
-        userAvatar.innerText = appState.user.name.charAt(0).toUpperCase();
+    // MODO ADMIN
+    function updateAdminUI() {
+      if (appState.isAdmin) {
+        adminBtnText.innerText = 'Salir Admin';
+        newCardBtn.classList.remove('hidden');
+        newCardBtn.classList.add('flex');
+        mobileNewCardBtn.classList.remove('hidden');
+        mobileNewCardBtn.classList.add('flex');
       } else {
-        loginScreen.classList.remove('hidden');
+        adminBtnText.innerText = 'Acceso Admin';
+        newCardBtn.classList.add('hidden');
+        newCardBtn.classList.remove('flex');
+        mobileNewCardBtn.classList.add('hidden');
+        mobileNewCardBtn.classList.remove('flex');
       }
     }
 
-    function login(user) {
-      appState.user = user;
-      localStorage.setItem('logged_user', JSON.stringify(user));
-      loginScreen.classList.add('hidden');
-      userAvatar.innerText = user.name.charAt(0).toUpperCase();
-    }
-
-    logoutBtn.addEventListener('click', () => {
-      appState.user = null;
-      localStorage.removeItem('logged_user');
-      loginScreen.classList.remove('hidden');
-    });
-
-    guestLoginBtn.addEventListener('click', () => {
-      login({ name: 'Administrador', email: 'admin@local.com' });
-    });
-
-    googleLoginBtn.addEventListener('click', () => {
-      if (isFirebaseConfigured) {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider)
-          .then((result) => {
-            login({ name: result.user.displayName, email: result.user.email });
-          })
-          .catch((error) => {
-            alert("Error con Google Auth: " + error.message);
-          });
+    adminLoginBtn.addEventListener('click', () => {
+      if (appState.isAdmin) {
+        appState.isAdmin = false;
+        localStorage.setItem('is_admin', 'false');
+        updateAdminUI();
+        renderCards();
       } else {
-        // Fallback simulación
-        login({ name: 'Usuario Google', email: 'usuario@google.com' });
+        adminPasswordInput.value = '';
+        adminError.classList.add('hidden');
+        adminModal.classList.remove('hidden');
       }
     });
 
-    // MANTENIMIENTO DE DATOS
+    closeAdminModalBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
+
+    adminForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (adminPasswordInput.value === ADMIN_PASSWORD) {
+        appState.isAdmin = true;
+        localStorage.setItem('is_admin', 'true');
+        adminModal.classList.add('hidden');
+        updateAdminUI();
+        renderCards();
+      } else {
+        adminError.classList.remove('hidden');
+      }
+    });
+
+    // PERSISTENCIA
     function saveData() {
       localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
     }
@@ -462,8 +425,8 @@
         const isLast = index === appState.folderPath.length - 1;
         
         const btn = document.createElement('button');
-        btn.className = `flex items-center gap-1 px-3 py-1.5 rounded-lg transition ${
-          isLast ? 'bg-[#064383] text-white font-bold' : 'text-slate-600 hover:bg-slate-100 hover:text-[#031e3b]'
+        btn.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+          isLast ? 'bg-[#064383] text-white font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-[#031e3b]'
         }`;
         btn.innerHTML = index === 0 ? `<i data-lucide="home" class="w-4 h-4"></i> ${item.title}` : item.title;
         
@@ -503,7 +466,6 @@
     function renderCards() {
       cardsGrid.innerHTML = '';
       
-      // Filtrar cartas cuyo parentId coincida con el actual
       const currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
 
       if (currentItems.length === 0) {
@@ -516,7 +478,6 @@
       currentItems.forEach((item, index) => {
         const card = document.createElement('div');
         
-        // Clases de acento de color
         let accentClass = 'accent-bar-3';
         let badgeBg = 'bg-[#064383]/10 text-[#064383]';
         if (item.color === 'accent1') {
@@ -529,44 +490,43 @@
 
         card.className = `bg-white rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative ${accentClass}`;
 
+        // Controles de edición solo para administradores
+        const adminControls = appState.isAdmin ? `
+          <div class="flex items-center gap-1 text-slate-400">
+            <button onclick="moveItem('${item.id}', -1)" title="Mover arriba" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+              <i data-lucide="arrow-up" class="w-4 h-4"></i>
+            </button>
+            <button onclick="moveItem('${item.id}', 1)" title="Mover abajo" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+              <i data-lucide="arrow-down" class="w-4 h-4"></i>
+            </button>
+            <button onclick="deleteItem('${item.id}')" title="Eliminar" class="p-1 hover:text-[#9b257d] hover:bg-slate-100 rounded ml-1">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        ` : '';
+
         card.innerHTML = `
           <div>
-            <!-- Encabezado de Carta -->
             <div class="flex items-center justify-between gap-2 mb-3">
               <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">
                 ${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}
               </span>
-              
-              <!-- Controles de Reordenar y Opciones -->
-              <div class="flex items-center gap-1 text-slate-400">
-                <button onclick="moveItem('${item.id}', -1)" title="Mover arriba" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
-                  <i data-lucide="arrow-up" class="w-4 h-4"></i>
-                </button>
-                <button onclick="moveItem('${item.id}', 1)" title="Mover abajo" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
-                  <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                </button>
-                <button onclick="deleteItem('${item.id}')" title="Eliminar" class="p-1 hover:text-[#9b257d] hover:bg-slate-100 rounded ml-1">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-              </div>
+              ${adminControls}
             </div>
 
-            <!-- Título -->
-            <h3 class="text-lg font-extrabold text-[#031e3b] mb-2 flex items-center gap-2">
+            <h3 class="text-xl font-extrabold text-[#031e3b] mb-2 flex items-center gap-2">
               <i data-lucide="${item.type === 'folder' ? 'folder' : 'file-text'}" class="w-5 h-5 ${item.type === 'folder' ? 'text-[#064383]' : 'text-[#9b257d]'}"></i>
               ${item.title}
             </h3>
 
-            <!-- Descripción Breve -->
-            <p class="text-slate-600 text-sm line-clamp-3 mb-6">
+            <p class="text-slate-600 text-base line-clamp-3 mb-6">
               ${item.description || 'Sin descripción detallada.'}
             </p>
           </div>
 
-          <!-- Pie de Carta / Acción -->
           <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium">Orden #${index + 1}</span>
-            <button onclick="openCard('${item.id}')" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#064383] hover:text-[#9b257d] transition">
+            <span class="text-xs text-slate-400 font-semibold">Nº ${index + 1}</span>
+            <button onclick="openCard('${item.id}')" class="inline-flex items-center gap-1.5 text-sm font-bold text-[#064383] hover:text-[#9b257d] transition">
               ${item.type === 'folder' ? 'Abrir Carpeta' : 'Ver Explicación'}
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
@@ -589,7 +549,6 @@
         appState.folderPath.push({ id: item.id, title: item.title });
         renderApp();
       } else {
-        // Mostrar Modal de Explicación de la Actividad
         document.getElementById('modalTitle').innerText = item.title;
         document.getElementById('modalCategory').innerText = item.category || 'Actividad';
         document.getElementById('modalDescription').innerText = item.description || 'No hay una explicación registrada para esta actividad.';
@@ -620,7 +579,6 @@
       const newIndex = index + direction;
       if (newIndex < 0 || newIndex >= currentItems.length) return;
 
-      // Intercambiar posición en la lista global
       const itemA = currentItems[index];
       const itemB = currentItems[newIndex];
 
@@ -642,7 +600,7 @@
       }
     };
 
-    // FORMULARIO CREAR / EDITAR
+    // MODAL DE FORMULARIO DE CARTA
     function openNewCardModal() {
       cardForm.reset();
       document.getElementById('cardId').value = '';
