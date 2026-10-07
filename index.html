@@ -65,73 +65,6 @@
 </head>
 <body class="min-h-screen flex flex-col bg-white text-[#031e3b]">
 
-  <!-- ==================== HEADER PRINCIPAL ==================== --><!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Organizador de Actividades</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Google Fonts: Source Sans 3 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              bg: '#ffffff',
-              text: '#031e3b',
-              accent1: '#9b257d', // Purple/Magenta
-              accent2: '#ffd840', // Yellow
-              accent3: '#064383', // Deep Blue
-              light: '#f8fafc',
-              border: '#e2e8f0'
-            }
-          },
-          fontFamily: {
-            sans: ['"Source Sans 3"', '"Source Sans Pro"', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    body {
-      background-color: #ffffff;
-      color: #031e3b;
-      font-family: 'Source Sans 3', 'Source Sans Pro', sans-serif;
-    }
-
-    .card-hover {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px -8px rgba(3, 30, 59, 0.15);
-    }
-
-    .accent-bar-1 { border-top: 4px solid #9b257d; }
-    .accent-bar-2 { border-top: 4px solid #ffd840; }
-    .accent-bar-3 { border-top: 4px solid #064383; }
-
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #064383; border-radius: 4px; }
-  </style>
-</head>
-<body class="min-h-screen flex flex-col bg-white text-[#031e3b]">
-
   <!-- ==================== HEADER PRINCIPAL ==================== -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -233,38 +166,6 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL DE DETALLES DE ACTIVIDAD ==================== -->
-  <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-brand-border relative max-h-[90vh] overflow-y-auto">
-      <button id="closeDetailBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
-        <i data-lucide="x" class="w-6 h-6"></i>
-      </button>
-
-      <div id="modalAccentBar" class="w-20 h-1.5 rounded-full bg-[#9b257d] mb-4"></div>
-      <span id="modalCategory" class="text-xs font-bold uppercase tracking-wider text-[#064383]">Categoría</span>
-      
-      <h2 id="modalTitle" class="text-2xl font-extrabold text-[#031e3b] mt-1 mb-4">Título de la Actividad</h2>
-      
-      <div class="bg-slate-50 rounded-2xl p-4 sm:p-6 text-slate-700 leading-relaxed mb-6 border border-slate-100 text-base" id="modalDescription">
-        <!-- Descripción de la actividad -->
-      </div>
-
-      <!-- Enlace externo si existe -->
-      <div id="modalLinkContainer" class="hidden mb-6">
-        <a id="modalLink" href="#" target="_blank" class="inline-flex items-center gap-2 bg-[#064383] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#031e3b] transition text-sm">
-          <i data-lucide="external-link" class="w-4 h-4"></i>
-          Abrir Enlace o Recurso
-        </a>
-      </div>
-
-      <div class="flex justify-end border-t border-slate-100 pt-4">
-        <button id="closeDetailModalBottom" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#031e3b] font-bold rounded-xl text-sm transition">
-          Cerrar
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- ==================== MODAL CREAR / EDITAR CARTA ==================== -->
   <div id="cardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-brand-border relative">
@@ -318,7 +219,7 @@
         </div>
 
         <div id="activityLinkField" class="hidden">
-          <label for="cardLink" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Enlace opcional (URL)</label>
+          <label for="cardLink" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Enlace directo (URL)</label>
           <input type="url" id="cardLink" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="https://ejemplo.com">
         </div>
 
@@ -372,7 +273,7 @@
         type: 'activity',
         title: 'Actividad 1.1: Lectura Inicial',
         category: 'Lectura',
-        description: 'Revisa el documento de introducción para entender los conceptos clave antes de empezar los talleres.',
+        description: 'Revisa el documento de introducción directamente en el enlace externo.',
         color: 'accent2',
         link: 'https://github.com'
       },
@@ -380,10 +281,11 @@
         id: 'sub-2',
         parentId: 'root-1',
         type: 'activity',
-        title: 'Actividad 1.2: Cuestionario de Evaluación',
-        category: 'Evaluación',
-        description: 'Responde a las preguntas breves para medir tu comprensión del contenido visto en el Módulo 1.',
-        color: 'accent3'
+        title: 'Actividad 1.2: Enlace a Google',
+        category: 'Recurso Web',
+        description: 'Acceso directo a la plataforma de búsqueda.',
+        color: 'accent3',
+        link: 'https://google.com'
       }
     ];
 
@@ -417,10 +319,6 @@
     const cancelCardBtn = document.getElementById('cancelCardBtn');
     const cardForm = document.getElementById('cardForm');
     const activityLinkField = document.getElementById('activityLinkField');
-
-    const detailModal = document.getElementById('detailModal');
-    const closeDetailBtn = document.getElementById('closeDetailBtn');
-    const closeDetailModalBottom = document.getElementById('closeDetailModalBottom');
 
     // INICIALIZACIÓN
     window.addEventListener('DOMContentLoaded', () => {
@@ -555,11 +453,18 @@
           badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold';
         }
 
-        card.className = `bg-white rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative ${accentClass}`;
+        card.className = `bg-white rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
+
+        // Al hacer clic en la tarjeta:
+        card.addEventListener('click', (e) => {
+          // Si hace clic en un botón de administración, no abre la carta
+          if (e.target.closest('button')) return;
+          openCard(item.id);
+        });
 
         // Controles de edición solo para administradores
         const adminControls = appState.isAdmin ? `
-          <div class="flex items-center gap-1 text-slate-400">
+          <div class="flex items-center gap-1 text-slate-400" onclick="event.stopPropagation()">
             <button onclick="moveItem('${item.id}', -1)" title="Mover arriba" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
               <i data-lucide="arrow-up" class="w-4 h-4"></i>
             </button>
@@ -571,6 +476,9 @@
             </button>
           </div>
         ` : '';
+
+        const buttonLabel = item.type === 'folder' ? 'Abrir Carpeta' : 'Ir al Enlace';
+        const buttonIcon = item.type === 'folder' ? 'arrow-right' : 'external-link';
 
         card.innerHTML = `
           <div>
@@ -593,10 +501,10 @@
 
           <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
             <span class="text-xs text-slate-400 font-semibold">Nº ${index + 1}</span>
-            <button onclick="openCard('${item.id}')" class="inline-flex items-center gap-1.5 text-sm font-bold text-[#064383] hover:text-[#9b257d] transition">
-              ${item.type === 'folder' ? 'Abrir Carpeta' : 'Ver Explicación'}
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
+            <span class="inline-flex items-center gap-1.5 text-sm font-bold text-[#064383] group-hover:text-[#9b257d] transition">
+              ${buttonLabel}
+              <i data-lucide="${buttonIcon}" class="w-4 h-4"></i>
+            </span>
           </div>
         `;
 
@@ -616,25 +524,12 @@
         appState.folderPath.push({ id: item.id, title: item.title });
         renderApp();
       } else {
-        document.getElementById('modalTitle').innerText = item.title;
-        document.getElementById('modalCategory').innerText = item.category || 'Actividad';
-        document.getElementById('modalDescription').innerText = item.description || 'No hay una explicación registrada para esta actividad.';
-        
-        const modalAccentBar = document.getElementById('modalAccentBar');
-        if (item.color === 'accent1') modalAccentBar.style.backgroundColor = '#9b257d';
-        else if (item.color === 'accent2') modalAccentBar.style.backgroundColor = '#ffd840';
-        else modalAccentBar.style.backgroundColor = '#064383';
-
-        const linkContainer = document.getElementById('modalLinkContainer');
-        const modalLink = document.getElementById('modalLink');
+        // ABRIR DIRECTAMENTE EL ENLACE DE LA ACTIVIDAD
         if (item.link) {
-          modalLink.href = item.link;
-          linkContainer.classList.remove('hidden');
+          window.open(item.link, '_blank');
         } else {
-          linkContainer.classList.add('hidden');
+          alert('Esta actividad no tiene ningún enlace (URL) configurado.');
         }
-
-        detailModal.classList.remove('hidden');
       }
     };
 
@@ -691,8 +586,6 @@
 
     closeCardModalBtn.addEventListener('click', () => cardModal.classList.add('hidden'));
     cancelCardBtn.addEventListener('click', () => cardModal.classList.add('hidden'));
-    closeDetailBtn.addEventListener('click', () => detailModal.classList.add('hidden'));
-    closeDetailModalBottom.addEventListener('click', () => detailModal.classList.add('hidden'));
 
     cardForm.addEventListener('submit', (e) => {
       e.preventDefault();
