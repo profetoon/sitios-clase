@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Organizador de Actividades</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#ffffff',
+              text: '#031e3b',
+              accent1: '#9b257d', // Purple/Magenta
+              accent2: '#ffd840', // Yellow
+              accent3: '#064383', // Deep Blue
+              light: '#f8fafc',
+              border: '#e2e8f0'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #031e3b;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .card-hover {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px rgba(3, 30, 59, 0.12);
+    }
+
+    .accent-bar-1 { border-top: 4px solid #9b257d; }
+    .accent-bar-2 { border-top: 4px solid #ffd840; }
+    .accent-bar-3 { border-top: 4px solid #064383; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #064383; border-radius: 4px; }
+  </style>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+<body class="min-h-screen flex flex-col bg-white text-[#031e3b]">
+
+  <!-- ==================== PANTALLA DE LOGIN ==================== -->
+  <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#031e3b]/95 backdrop-blur-md">
+    <div class="bg-white rounded-3xl p-8 md:p-10 max-w-md w-full shadow-2xl border border-brand-border text-center relative overflow-hidden">
+      <!-- Decorative top line -->
+      <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#9b257d] via-[#ffd840] to-[#064383]"></div>
+      
+      <div class="w-16 h-16 bg-[#064383]/10 text-[#064383] rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <i data-lucide="layout-grid" class="w-8 h-8"></i>
+      </div>
+
+      <h1 class="text-3xl font-extrabold text-[#031e3b] mb-2">Bienvenido</h1>
+      <p class="text-slate-600 mb-8 text-sm">Accede para gestionar tus módulos y actividades personalizadas.</p>
+
+      <div class="space-y-4">
+        <button id="googleLoginBtn" class="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 text-[#031e3b] font-semibold py-3.5 px-4 rounded-xl hover:bg-slate-50 transition shadow-sm hover:border-[#064383]">
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          Continuar con Google
+        </button>
+
+        <div class="flex items-center my-4">
+          <div class="flex-1 border-t border-slate-200"></div>
+          <span class="px-3 text-xs text-slate-400 font-medium uppercase">o acceso directo</span>
+          <div class="flex-1 border-t border-slate-200"></div>
+        </div>
+
+        <button id="guestLoginBtn" class="w-full bg-[#064383] hover:bg-[#031e3b] text-white font-semibold py-3.5 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+          <i data-lucide="user-check" class="w-5 h-5"></i>
+          Acceder como Administrador
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-400 mt-8">
+        Si usas Google, recuerda configurar tus credenciales de Firebase en el código HTML.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== HEADER PRINCIPAL ==================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- LOGO Y TITULO -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-[#064383] text-[#ffd840] rounded-xl flex items-center justify-center font-bold text-xl shadow-sm">
+          <i data-lucide="folder-tree" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
+          <p class="text-xs text-slate-500 font-medium">Estructura limpia y organizada</p>
+        </div>
+      </div>
+
+      <!-- BOTONES DE ACCION & USUARIO -->
+      <div class="flex items-center gap-3">
+        <button id="newCardBtn" class="hidden sm:flex items-center gap-2 bg-[#9b257d] hover:bg-[#801e66] text-white font-semibold px-4 py-2.5 rounded-xl transition shadow-sm text-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Nueva Carta
+        </button>
+
+        <div id="userInfo" class="flex items-center gap-3 pl-3 border-l border-slate-200">
+          <div id="userAvatar" class="w-9 h-9 rounded-full bg-[#ffd840] text-[#031e3b] font-bold flex items-center justify-center text-sm border-2 border-[#031e3b]">
+            U
+          </div>
+          <button id="logoutBtn" class="p-2 text-slate-400 hover:text-[#9b257d] hover:bg-slate-100 rounded-lg transition" title="Cerrar sesión">
+            <i data-lucide="log-out" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- MIGA DE PAN (BREADCRUMBS) -->
+    <nav id="breadcrumbs" class="flex items-center gap-2 mb-8 text-sm font-medium overflow-x-auto pb-2">
+      <!-- Generado dinámicamente -->
+    </nav>
+
+    <!-- BARRA SUPERIOR DE ACCIONES -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h2 id="currentFolderTitle" class="text-2xl font-extrabold text-[#031e3b] flex items-center gap-3">
+          <!-- Titulo actual dinámico -->
+        </h2>
+        <p id="currentFolderDesc" class="text-slate-500 text-sm mt-1">Explora las actividades organizadas a continuación.</p>
+      </div>
+
+      <div class="flex items-center gap-2 self-start sm:self-auto">
+        <button id="mobileNewCardBtn" class="sm:hidden flex items-center gap-2 bg-[#9b257d] text-white font-semibold px-4 py-2 rounded-xl text-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Nueva Carta
+        </button>
+      </div>
+    </div>
+
+    <!-- GRID DE CARTAS / ACTIVIDADES -->
+    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Las cartas se insertan dinámicamente -->
+    </div>
+
+    <!-- MENSAJE DE LISTA VACÍA -->
+    <div id="emptyState" class="hidden text-center py-16 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 mt-4">
+      <div class="w-12 h-12 bg-[#ffd840]/30 text-[#031e3b] rounded-full flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="layers" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-lg font-bold text-[#031e3b]">No hay elementos aquí</h3>
+      <p class="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Esta carpeta está vacía. Haz clic en "Nueva Carta" para empezar a organizar.</p>
+    </div>
+
+  </main>
+
+  <!-- ==================== MODAL DE DETALLES Y CONTENIDO DE LA ACTIVIDAD ==================== -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-brand-border relative max-h-[90vh] overflow-y-auto">
+      <button id="closeDetailBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <div id="modalAccentBar" class="w-20 h-1.5 rounded-full bg-[#9b257d] mb-4"></div>
+      <span id="modalCategory" class="text-xs font-bold uppercase tracking-wider text-[#064383]">Categoría</span>
+      
+      <h2 id="modalTitle" class="text-2xl font-extrabold text-[#031e3b] mt-1 mb-4">Título de la Actividad</h2>
+      
+      <div class="bg-slate-50 rounded-2xl p-4 sm:p-6 text-slate-700 leading-relaxed mb-6 border border-slate-100 text-sm sm:text-base" id="modalDescription">
+        <!-- Descripción de la actividad -->
+      </div>
+
+      <!-- Enlace externo si existe -->
+      <div id="modalLinkContainer" class="hidden mb-6">
+        <a id="modalLink" href="#" target="_blank" class="inline-flex items-center gap-2 bg-[#064383] text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-[#031e3b] transition text-sm">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+          Abrir Enlace o Recurso
+        </a>
+      </div>
+
+      <div class="flex justify-end border-t border-slate-100 pt-4">
+        <button id="closeDetailModalBottom" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#031e3b] font-bold rounded-xl text-sm transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL CREAR / EDITAR CARTA ==================== -->
+  <div id="cardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-brand-border relative">
+      <button id="closeCardModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <h3 id="formModalTitle" class="text-xl font-extrabold text-[#031e3b] mb-6">Añadir Nueva Carta</h3>
+
+      <form id="cardForm" class="space-y-4">
+        <input type="hidden" id="cardId">
+        
+        <div>
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-2">Tipo de Carta</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 border-slate-200">
+              <input type="radio" name="cardType" value="folder" checked class="text-[#064383] focus:ring-[#064383]">
+              <i data-lucide="folder" class="w-4 h-4 text-[#064383]"></i>
+              <span class="text-sm font-semibold">Carpeta / Módulo</span>
+            </label>
+            <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 border-slate-200">
+              <input type="radio" name="cardType" value="activity" class="text-[#9b257d] focus:ring-[#9b257d]">
+              <i data-lucide="file-text" class="w-4 h-4 text-[#9b257d]"></i>
+              <span class="text-sm font-semibold">Actividad</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label for="cardTitle" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Título</label>
+          <input type="text" id="cardTitle" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Ej. Módulo 1: Introducción">
+        </div>
+
+        <div>
+          <label for="cardCategory" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Categoría / Subtítulo</label>
+          <input type="text" id="cardCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Ej. Teórico, Ejercicio, Tarea...">
+        </div>
+
+        <div>
+          <label for="cardDesc" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Explicación o Descripción</label>
+          <textarea id="cardDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Escribe aquí de qué trata esta actividad..."></textarea>
+        </div>
+
+        <div>
+          <label for="cardColor" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Color Destacado</label>
+          <select id="cardColor" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm">
+            <option value="accent1">Púrpura Magenta (#9b257d)</option>
+            <option value="accent2">Amarillo (#ffd840)</option>
+            <option value="accent3" selected>Azul (#064383)</option>
+          </select>
+        </div>
+
+        <div id="activityLinkField" class="hidden">
+          <label for="cardLink" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Enlace opcional (URL)</label>
+          <input type="url" id="cardLink" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="https://ejemplo.com">
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+          <button type="button" id="cancelCardBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-semibold transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 bg-[#064383] hover:bg-[#031e3b] text-white font-bold rounded-xl text-sm transition shadow-sm">
+            Guardar Carta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
+      Organizador de Actividades y Módulos &bull; Fondo Blanco, Texto #031e3b, Acentos (#9b257d, #ffd840, #064383)
+    </div>
+  </footer>
+
+  <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
+  <script>
+    // Configuración opcional de Firebase (Descomentar y rellenar para Google Login real)
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY_AQUI",
+      authDomain: "TU_PROYECTO.firebaseapp.com",
+      projectId: "TU_PROYECTO",
+      storageBucket: "TU_PROYECTO.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef"
+    };
+
+    let isFirebaseConfigured = false;
+    try {
+      if (firebaseConfig.apiKey !== "TU_API_KEY_AQUI") {
+        firebase.initializeApp(firebaseConfig);
+        isFirebaseConfigured = true;
+      }
+    } catch(e) {
+      console.log("Firebase no configurado, utilizando acceso directo.");
+    }
+
+    // BASE DE DATOS EN MEMORIA / LOCALSTORAGE
+    const DEFAULT_DATA = [
+      {
+        id: 'root-1',
+        parentId: null,
+        type: 'folder',
+        title: 'Módulo 1: Fundamentos',
+        category: 'Sección Principal',
+        description: 'Aquí encontrarás todas las lecciones y actividades iniciales de formación.',
+        color: 'accent3'
+      },
+      {
+        id: 'root-2',
+        parentId: null,
+        type: 'folder',
+        title: 'Módulo 2: Práctica Avanzada',
+        category: 'Avanzado',
+        description: 'Colección de actividades prácticas para profundizar en el aprendizaje.',
+        color: 'accent1'
+      },
+      {
+        id: 'sub-1',
+        parentId: 'root-1',
+        type: 'activity',
+        title: 'Actividad 1.1: Lectura Inicial',
+        category: 'Lectura',
+        description: 'Revisa el documento de introducción para entender los conceptos clave antes de empezar los talleres.',
+        color: 'accent2',
+        link: 'https://github.com'
+      },
+      {
+        id: 'sub-2',
+        parentId: 'root-1',
+        type: 'activity',
+        title: 'Actividad 1.2: Cuestionario de Evaluación',
+        category: 'Evaluación',
+        description: 'Responde a las preguntas breves para medir tu comprensión del contenido visto en el Módulo 1.',
+        color: 'accent3'
+      }
+    ];
+
+    // ESTADO DE LA APLICACIÓN
+    let appState = {
+      user: null,
+      currentParentId: null,
+      folderPath: [{ id: null, title: 'Inicio' }],
+      items: JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA
+    };
+
+    // ELEMENTOS DOM
+    const loginScreen = document.getElementById('loginScreen');
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const guestLoginBtn = document.getElementById('guestLoginBtn');
+    const userAvatar = document.getElementById('userAvatar');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const breadcrumbs = document.getElementById('breadcrumbs');
+    const currentFolderTitle = document.getElementById('currentFolderTitle');
+    const currentFolderDesc = document.getElementById('currentFolderDesc');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    const newCardBtn = document.getElementById('newCardBtn');
+    const mobileNewCardBtn = document.getElementById('mobileNewCardBtn');
+    const cardModal = document.getElementById('cardModal');
+    const closeCardModalBtn = document.getElementById('closeCardModalBtn');
+    const cancelCardBtn = document.getElementById('cancelCardBtn');
+    const cardForm = document.getElementById('cardForm');
+    const activityLinkField = document.getElementById('activityLinkField');
+
+    const detailModal = document.getElementById('detailModal');
+    const closeDetailBtn = document.getElementById('closeDetailBtn');
+    const closeDetailModalBottom = document.getElementById('closeDetailModalBottom');
+
+    // INICIALIZACIÓN
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      checkAuthStatus();
+      renderApp();
+    });
+
+    // SISTEMA DE AUTENTICACIÓN
+    function checkAuthStatus() {
+      const savedUser = localStorage.getItem('logged_user');
+      if (savedUser) {
+        appState.user = JSON.parse(savedUser);
+        loginScreen.classList.add('hidden');
+        userAvatar.innerText = appState.user.name.charAt(0).toUpperCase();
+      } else {
+        loginScreen.classList.remove('hidden');
+      }
+    }
+
+    function login(user) {
+      appState.user = user;
+      localStorage.setItem('logged_user', JSON.stringify(user));
+      loginScreen.classList.add('hidden');
+      userAvatar.innerText = user.name.charAt(0).toUpperCase();
+    }
+
+    logoutBtn.addEventListener('click', () => {
+      appState.user = null;
+      localStorage.removeItem('logged_user');
+      loginScreen.classList.remove('hidden');
+    });
+
+    guestLoginBtn.addEventListener('click', () => {
+      login({ name: 'Administrador', email: 'admin@local.com' });
+    });
+
+    googleLoginBtn.addEventListener('click', () => {
+      if (isFirebaseConfigured) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+          .then((result) => {
+            login({ name: result.user.displayName, email: result.user.email });
+          })
+          .catch((error) => {
+            alert("Error con Google Auth: " + error.message);
+          });
+      } else {
+        // Fallback simulación
+        login({ name: 'Usuario Google', email: 'usuario@google.com' });
+      }
+    });
+
+    // MANTENIMIENTO DE DATOS
+    function saveData() {
+      localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
+    }
+
+    // RENDERIZADO PRINCIPAL
+    function renderApp() {
+      renderBreadcrumbs();
+      renderCurrentFolderHeader();
+      renderCards();
+    }
+
+    function renderBreadcrumbs() {
+      breadcrumbs.innerHTML = '';
+      appState.folderPath.forEach((item, index) => {
+        const isLast = index === appState.folderPath.length - 1;
+        
+        const btn = document.createElement('button');
+        btn.className = `flex items-center gap-1 px-3 py-1.5 rounded-lg transition ${
+          isLast ? 'bg-[#064383] text-white font-bold' : 'text-slate-600 hover:bg-slate-100 hover:text-[#031e3b]'
+        }`;
+        btn.innerHTML = index === 0 ? `<i data-lucide="home" class="w-4 h-4"></i> ${item.title}` : item.title;
+        
+        if (!isLast) {
+          btn.addEventListener('click', () => {
+            appState.folderPath = appState.folderPath.slice(0, index + 1);
+            appState.currentParentId = item.id;
+            renderApp();
+          });
+        }
+
+        breadcrumbs.appendChild(btn);
+
+        if (!isLast) {
+          const chevron = document.createElement('span');
+          chevron.className = 'text-slate-300';
+          chevron.innerHTML = '<i data-lucide="chevron-right" class="w-4 h-4"></i>';
+          breadcrumbs.appendChild(chevron);
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function renderCurrentFolderHeader() {
+      const currentFolder = appState.folderPath[appState.folderPath.length - 1];
+      if (currentFolder.id === null) {
+        currentFolderTitle.innerHTML = `<i data-lucide="grid" class="w-7 h-7 text-[#064383]"></i> Vista Principal`;
+        currentFolderDesc.innerText = 'Organización de tus temas y contenidos en orden secuencial.';
+      } else {
+        const folderObj = appState.items.find(i => i.id === currentFolder.id);
+        currentFolderTitle.innerHTML = `<i data-lucide="folder-open" class="w-7 h-7 text-[#9b257d]"></i> ${currentFolder.title}`;
+        currentFolderDesc.innerText = folderObj ? folderObj.description : 'Contenido dentro de esta carpeta.';
+      }
+      lucide.createIcons();
+    }
+
+    function renderCards() {
+      cardsGrid.innerHTML = '';
+      
+      // Filtrar cartas cuyo parentId coincida con el actual
+      const currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
+
+      if (currentItems.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      currentItems.forEach((item, index) => {
+        const card = document.createElement('div');
+        
+        // Clases de acento de color
+        let accentClass = 'accent-bar-3';
+        let badgeBg = 'bg-[#064383]/10 text-[#064383]';
+        if (item.color === 'accent1') {
+          accentClass = 'accent-bar-1';
+          badgeBg = 'bg-[#9b257d]/10 text-[#9b257d]';
+        } else if (item.color === 'accent2') {
+          accentClass = 'accent-bar-2';
+          badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold';
+        }
+
+        card.className = `bg-white rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative ${accentClass}`;
+
+        card.innerHTML = `
+          <div>
+            <!-- Encabezado de Carta -->
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">
+                ${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}
+              </span>
+              
+              <!-- Controles de Reordenar y Opciones -->
+              <div class="flex items-center gap-1 text-slate-400">
+                <button onclick="moveItem('${item.id}', -1)" title="Mover arriba" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+                  <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                </button>
+                <button onclick="moveItem('${item.id}', 1)" title="Mover abajo" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+                  <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                </button>
+                <button onclick="deleteItem('${item.id}')" title="Eliminar" class="p-1 hover:text-[#9b257d] hover:bg-slate-100 rounded ml-1">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Título -->
+            <h3 class="text-lg font-extrabold text-[#031e3b] mb-2 flex items-center gap-2">
+              <i data-lucide="${item.type === 'folder' ? 'folder' : 'file-text'}" class="w-5 h-5 ${item.type === 'folder' ? 'text-[#064383]' : 'text-[#9b257d]'}"></i>
+              ${item.title}
+            </h3>
+
+            <!-- Descripción Breve -->
+            <p class="text-slate-600 text-sm line-clamp-3 mb-6">
+              ${item.description || 'Sin descripción detallada.'}
+            </p>
+          </div>
+
+          <!-- Pie de Carta / Acción -->
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs text-slate-400 font-medium">Orden #${index + 1}</span>
+            <button onclick="openCard('${item.id}')" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#064383] hover:text-[#9b257d] transition">
+              ${item.type === 'folder' ? 'Abrir Carpeta' : 'Ver Explicación'}
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+
+        cardsGrid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    // ACCIONES DE CARTA
+    window.openCard = function(id) {
+      const item = appState.items.find(i => i.id === id);
+      if (!item) return;
+
+      if (item.type === 'folder') {
+        appState.currentParentId = item.id;
+        appState.folderPath.push({ id: item.id, title: item.title });
+        renderApp();
+      } else {
+        // Mostrar Modal de Explicación de la Actividad
+        document.getElementById('modalTitle').innerText = item.title;
+        document.getElementById('modalCategory').innerText = item.category || 'Actividad';
+        document.getElementById('modalDescription').innerText = item.description || 'No hay una explicación registrada para esta actividad.';
+        
+        const modalAccentBar = document.getElementById('modalAccentBar');
+        if (item.color === 'accent1') modalAccentBar.style.backgroundColor = '#9b257d';
+        else if (item.color === 'accent2') modalAccentBar.style.backgroundColor = '#ffd840';
+        else modalAccentBar.style.backgroundColor = '#064383';
+
+        const linkContainer = document.getElementById('modalLinkContainer');
+        const modalLink = document.getElementById('modalLink');
+        if (item.link) {
+          modalLink.href = item.link;
+          linkContainer.classList.remove('hidden');
+        } else {
+          linkContainer.classList.add('hidden');
+        }
+
+        detailModal.classList.remove('hidden');
+      }
+    };
+
+    window.moveItem = function(id, direction) {
+      const currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
+      const index = currentItems.findIndex(i => i.id === id);
+      if (index === -1) return;
+
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= currentItems.length) return;
+
+      // Intercambiar posición en la lista global
+      const itemA = currentItems[index];
+      const itemB = currentItems[newIndex];
+
+      const globalIdxA = appState.items.indexOf(itemA);
+      const globalIdxB = appState.items.indexOf(itemB);
+
+      appState.items[globalIdxA] = itemB;
+      appState.items[globalIdxB] = itemA;
+
+      saveData();
+      renderCards();
+    };
+
+    window.deleteItem = function(id) {
+      if (confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
+        appState.items = appState.items.filter(i => i.id !== id && i.parentId !== id);
+        saveData();
+        renderApp();
+      }
+    };
+
+    // FORMULARIO CREAR / EDITAR
+    function openNewCardModal() {
+      cardForm.reset();
+      document.getElementById('cardId').value = '';
+      document.getElementById('formModalTitle').innerText = 'Añadir Nueva Carta';
+      activityLinkField.classList.add('hidden');
+      cardModal.classList.remove('hidden');
+    }
+
+    document.querySelectorAll('input[name="cardType"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'activity') {
+          activityLinkField.classList.remove('hidden');
+        } else {
+          activityLinkField.classList.add('hidden');
+        }
+      });
+    });
+
+    newCardBtn.addEventListener('click', openNewCardModal);
+    mobileNewCardBtn.addEventListener('click', openNewCardModal);
+
+    closeCardModalBtn.addEventListener('click', () => cardModal.classList.add('hidden'));
+    cancelCardBtn.addEventListener('click', () => cardModal.classList.add('hidden'));
+    closeDetailBtn.addEventListener('click', () => detailModal.classList.add('hidden'));
+    closeDetailModalBottom.addEventListener('click', () => detailModal.classList.add('hidden'));
+
+    cardForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const type = document.querySelector('input[name="cardType"]:checked').value;
+      const title = document.getElementById('cardTitle').value;
+      const category = document.getElementById('cardCategory').value;
+      const description = document.getElementById('cardDesc').value;
+      const color = document.getElementById('cardColor').value;
+      const link = document.getElementById('cardLink').value;
+
+      const newItem = {
+        id: 'item-' + Date.now(),
+        parentId: appState.currentParentId,
+        type,
+        title,
+        category,
+        description,
+        color,
+        link: type === 'activity' ? link : null
+      };
+
+      appState.items.push(newItem);
+      saveData();
+      cardModal.classList.add('hidden');
+      renderCards();
+    });
+  </script>
+</body>
+</html>
