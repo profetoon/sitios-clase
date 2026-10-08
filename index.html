@@ -135,7 +135,7 @@
 
   <!-- MODAL ADMIN -->
   <div id="adminModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-brand-border relative text-center">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative text-center">
       <button id="closeAdminModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-[#031e3b] p-1 rounded-full hover:bg-slate-100">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -162,7 +162,7 @@
 
   <!-- MODAL CREAR / EDITAR CARTA -->
   <div id="cardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-brand-border relative">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
       <button id="closeCardModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
         <i data-lucide="x" class="w-6 h-6"></i>
       </button>
@@ -243,17 +243,13 @@
   </footer>
 
   <script>
-    // =========================================================
-    // CONFIGURACIÓN BASE DE DATOS NUBE (JSONBIN.IO)
-    // =========================================================
+    // CREDENCIALES DE JSONBIN.IO
     const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
-    
-    // RECUERDA: Copia tu Master Key desde la pestaña "API Keys" de JSONBin.io
     const JSONBIN_API_KEY = "$2a$10$NPdNdy1Y4dGtw2hKwTXpGe/UHmngAh.Mj5y4TlOloT8n0UgeUkgFK";
 
     const ADMIN_PASSWORD = "admin123";
 
-    // DATOS DE RESPALDO SI LA NUBE FALLA O NO ESTÁ CONFIGURADA
+    // DATOS DE RESPALDO POR DEFECTO
     const DEFAULT_DATA = [
       {
         id: 'root-1',
@@ -316,34 +312,25 @@
       await fetchCloudData();
     });
 
-    // Cargar datos de JSONBin con fallback de Headers
+    // CARGAR DATOS DE JSONBIN (CON TIMEOUT DE SEGURIDAD)
     async function fetchCloudData() {
-      if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") {
-        updateSyncState('warning', 'Modo Local (Configura JSONBin para Sincronizar)');
-        appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
-        renderApp();
-        return;
-      }
-
       updateSyncState('loading', 'Sincronizando...');
-      
-      // Probar primero con X-Master-Key y si falla intentar X-Access-Key
-      const keyHeader = JSONBIN_API_KEY.startsWith('$2a$') || JSONBIN_API_KEY.startsWith('$2b$') ? 'X-Access-Key' : 'X-Master-Key';
+
+      // Timeout de 3.5s para no bloquear la app si hay error de red
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
 
       try {
-        let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
           method: 'GET',
-          headers: { [keyHeader]: JSONBIN_API_KEY }
+          signal: controller.signal,
+          headers: {
+            'X-Access-Key': JSONBIN_API_KEY,
+            'X-Master-Key': JSONBIN_API_KEY
+          }
         });
 
-        // Intentar fallback si el primer intento dio error de auth
-        if (!response.ok && (response.status === 401 || response.status === 403)) {
-          const alternateHeader = keyHeader === 'X-Access-Key' ? 'X-Master-Key' : 'X-Access-Key';
-          response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-            method: 'GET',
-            headers: { [alternateHeader]: JSONBIN_API_KEY }
-          });
-        }
+        clearTimeout(timeoutId);
 
         if (response.ok) {
           const resData = await response.json();
@@ -351,67 +338,52 @@
           localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
           updateSyncState('success', 'Sincronizado con la nube');
         } else {
-          const errDetail = await response.json().catch(() => ({}));
-          console.error(`Error HTTP ${response.status} de JSONBin:`, errDetail);
-          throw new Error(`Error ${response.status}: Autenticación o Bin inválido`);
+          throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
-        console.warn('Error nube:', err);
-        updateSyncState('error', 'Error en Nube (Usando copia local)');
-        appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
+        clearTimeout(timeoutId);
+        console.warn('Error/Timeout en nube, usando datos locales:', err);
+        updateSyncState('error', 'Modo Local (Copia guardada)');
+        const savedLocal = localStorage.getItem('my_activities_data');
+        appState.items = savedLocal ? JSON.parse(savedLocal) : DEFAULT_DATA;
+      } finally {
+        renderApp();
       }
-      renderApp();
     }
 
-    // Guardar datos en JSONBin y LocalStorage
+    // GUARDAR DATOS EN NUBE Y LOCAL
     async function saveData() {
       localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
 
-      if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") return;
-
-      updateSyncState('loading', 'Guardando en la nube...');
-      const keyHeader = JSONBIN_API_KEY.startsWith('$2a$') || JSONBIN_API_KEY.startsWith('$2b$') ? 'X-Access-Key' : 'X-Master-Key';
-
+      updateSyncState('loading', 'Guardando...');
       try {
-        let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            [keyHeader]: JSONBIN_API_KEY
+            'X-Access-Key': JSONBIN_API_KEY,
+            'X-Master-Key': JSONBIN_API_KEY
           },
           body: JSON.stringify(appState.items)
         });
 
-        if (!response.ok && (response.status === 401 || response.status === 403)) {
-          const alternateHeader = keyHeader === 'X-Access-Key' ? 'X-Master-Key' : 'X-Access-Key';
-          response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              [alternateHeader]: JSONBIN_API_KEY
-            },
-            body: JSON.stringify(appState.items)
-          });
-        }
-
         if (response.ok) {
           updateSyncState('success', 'Guardado en la nube');
         } else {
-          const errDetail = await response.json().catch(() => ({}));
-          console.error(`Error al guardar (HTTP ${response.status}):`, errDetail);
-          throw new Error('No se pudo guardar');
+          throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
-        updateSyncState('error', 'Error al guardar en nube');
+        console.warn('Error guardando en nube:', err);
+        updateSyncState('error', 'Guardado solo en Local');
       }
     }
 
     function updateSyncState(type, message) {
       syncText.innerText = message;
       syncStatus.className = 'inline-block w-2.5 h-2.5 rounded-full ';
-      if (type === 'loading') syncStatus.className += 'bg-yellow-400 animate-pulse';
+      if (type === 'loading') syncStatus.className += 'bg-amber-400 animate-pulse';
       else if (type === 'success') syncStatus.className += 'bg-emerald-500';
-      else if (type === 'error') syncStatus.className += 'bg-red-500';
+      else if (type === 'error') syncStatus.className += 'bg-rose-500';
       else syncStatus.className += 'bg-slate-400';
     }
 
@@ -514,7 +486,6 @@
       
       let currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
 
-      // Si no es admin, filtrar las cartas ocultas
       if (!appState.isAdmin) {
         currentItems = currentItems.filter(item => !item.hidden);
       }
@@ -632,7 +603,6 @@
       }
     };
 
-    // Alternar visibilidad (Ocultar/Mostrar)
     window.toggleVisibility = async function(id) {
       const item = appState.items.find(i => i.id === id);
       if (!item) return;
@@ -642,7 +612,6 @@
       await saveData();
     };
 
-    // Abrir modal de edición
     window.editCard = function(id) {
       const item = appState.items.find(i => i.id === id);
       if (!item) return;
@@ -735,7 +704,6 @@
       const hidden = cardHiddenCheckbox.checked;
 
       if (cardId) {
-        // Modo Edición
         const existingItem = appState.items.find(i => i.id === cardId);
         if (existingItem) {
           existingItem.type = type;
@@ -747,7 +715,6 @@
           existingItem.hidden = hidden;
         }
       } else {
-        // Modo Nueva Carta
         const newItem = {
           id: 'item-' + Date.now(),
           parentId: appState.currentParentId,
