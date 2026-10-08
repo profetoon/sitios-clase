@@ -246,75 +246,165 @@
     // =========================================================
     // CONFIGURACIÓN BASE DE DATOS NUBE (JSONBIN.IO)
     // =========================================================
-    // Coloca tus credenciales de JSONBin.io aquí:
-const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
-const JSONBIN_API_KEY = "YOUR_MASTER_KEY_HERE"; 
+    const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
+    
+    // RECUERDA: Copia tu Master Key desde la pestaña "API Keys" de JSONBin.io
+    const JSONBIN_API_KEY = "$2a$10$NPdNdy1Y4dGtw2hKwTXpGe/UHmngAh.Mj5y4TlOloT8n0UgeUkgFK";
 
-// Cargar datos de JSONBin
-async function fetchCloudData() {
-  if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") {
-    updateSyncState('warning', 'Modo Local (Configura JSONBin para Sincronizar)');
-    appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
-    renderApp();
-    return;
-  }
+    const ADMIN_PASSWORD = "admin123";
 
-  updateSyncState('loading', 'Sincronizando...');
-  try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-      method: 'GET',
-      headers: {
-        'X-Master-Key': JSONBIN_API_KEY
-      }
-    });
-
-    if (response.ok) {
-      const resData = await response.json();
-      appState.items = Array.isArray(resData.record) ? resData.record : DEFAULT_DATA;
-      localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
-      updateSyncState('success', 'Sincronizado con la nube');
-    } else {
-      const errJson = await response.json().catch(() => ({}));
-      console.error(`Error ${response.status}:`, errJson);
-      throw new Error(`Error de autenticación o de BIN (${response.status})`);
-    }
-  } catch (err) {
-    console.warn('Error nube:', err);
-    updateSyncState('error', 'Error en Nube (Usando copia local)');
-    appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
-  }
-  renderApp();
-}
-
-// Guardar datos en JSONBin y LocalStorage
-async function saveData() {
-  localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
-
-  if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") return;
-
-  updateSyncState('loading', 'Guardando en la nube...');
-  try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-      method: 'PUT',
-      headers: {
-        'Content-[#064383]': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_API_KEY
+    // DATOS DE RESPALDO SI LA NUBE FALLA O NO ESTÁ CONFIGURADA
+    const DEFAULT_DATA = [
+      {
+        id: 'root-1',
+        parentId: null,
+        type: 'folder',
+        title: 'Módulo 1: Fundamentos',
+        category: 'Sección Principal',
+        description: 'Aquí encontrarás todas las lecciones y actividades iniciales de formación.',
+        color: 'accent3',
+        hidden: false
       },
-      body: JSON.stringify(appState.items)
+      {
+        id: 'sub-1',
+        parentId: 'root-1',
+        type: 'activity',
+        title: 'Actividad 1.1: Lectura Inicial',
+        category: 'Lectura',
+        description: 'Revisa el documento de introducción en el enlace externo.',
+        color: 'accent2',
+        link: 'https://google.com',
+        hidden: false
+      }
+    ];
+
+    let appState = {
+      isAdmin: localStorage.getItem('is_admin') === 'true',
+      currentParentId: null,
+      folderPath: [{ id: null, title: 'Inicio' }],
+      items: []
+    };
+
+    const syncStatus = document.getElementById('syncStatus');
+    const syncText = document.getElementById('syncText');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const adminBtnText = document.getElementById('adminBtnText');
+    const adminModal = document.getElementById('adminModal');
+    const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
+    const adminForm = document.getElementById('adminForm');
+    const adminPasswordInput = document.getElementById('adminPassword');
+    const adminError = document.getElementById('adminError');
+
+    const breadcrumbs = document.getElementById('breadcrumbs');
+    const currentFolderTitle = document.getElementById('currentFolderTitle');
+    const currentFolderDesc = document.getElementById('currentFolderDesc');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    const newCardBtn = document.getElementById('newCardBtn');
+    const mobileNewCardBtn = document.getElementById('mobileNewCardBtn');
+    const cardModal = document.getElementById('cardModal');
+    const closeCardModalBtn = document.getElementById('closeCardModalBtn');
+    const cancelCardBtn = document.getElementById('cancelCardBtn');
+    const cardForm = document.getElementById('cardForm');
+    const activityLinkField = document.getElementById('activityLinkField');
+    const cardHiddenCheckbox = document.getElementById('cardHidden');
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      lucide.createIcons();
+      updateAdminUI();
+      await fetchCloudData();
     });
 
-    if (response.ok) {
-      updateSyncState('success', 'Guardado en la nube');
-    } else {
-      const errJson = await response.json().catch(() => ({}));
-      console.error(`Error guardando (${response.status}):`, errJson);
-      throw new Error('No se pudo guardar');
+    // Cargar datos de JSONBin con fallback de Headers
+    async function fetchCloudData() {
+      if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") {
+        updateSyncState('warning', 'Modo Local (Configura JSONBin para Sincronizar)');
+        appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
+        renderApp();
+        return;
+      }
+
+      updateSyncState('loading', 'Sincronizando...');
+      
+      // Probar primero con X-Master-Key y si falla intentar X-Access-Key
+      const keyHeader = JSONBIN_API_KEY.startsWith('$2a$') || JSONBIN_API_KEY.startsWith('$2b$') ? 'X-Access-Key' : 'X-Master-Key';
+
+      try {
+        let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+          method: 'GET',
+          headers: { [keyHeader]: JSONBIN_API_KEY }
+        });
+
+        // Intentar fallback si el primer intento dio error de auth
+        if (!response.ok && (response.status === 401 || response.status === 403)) {
+          const alternateHeader = keyHeader === 'X-Access-Key' ? 'X-Master-Key' : 'X-Access-Key';
+          response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+            method: 'GET',
+            headers: { [alternateHeader]: JSONBIN_API_KEY }
+          });
+        }
+
+        if (response.ok) {
+          const resData = await response.json();
+          appState.items = Array.isArray(resData.record) ? resData.record : DEFAULT_DATA;
+          localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
+          updateSyncState('success', 'Sincronizado con la nube');
+        } else {
+          const errDetail = await response.json().catch(() => ({}));
+          console.error(`Error HTTP ${response.status} de JSONBin:`, errDetail);
+          throw new Error(`Error ${response.status}: Autenticación o Bin inválido`);
+        }
+      } catch (err) {
+        console.warn('Error nube:', err);
+        updateSyncState('error', 'Error en Nube (Usando copia local)');
+        appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
+      }
+      renderApp();
     }
-  } catch (err) {
-    updateSyncState('error', 'Error al guardar en nube');
-  }
-}
+
+    // Guardar datos en JSONBin y LocalStorage
+    async function saveData() {
+      localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
+
+      if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") return;
+
+      updateSyncState('loading', 'Guardando en la nube...');
+      const keyHeader = JSONBIN_API_KEY.startsWith('$2a$') || JSONBIN_API_KEY.startsWith('$2b$') ? 'X-Access-Key' : 'X-Master-Key';
+
+      try {
+        let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            [keyHeader]: JSONBIN_API_KEY
+          },
+          body: JSON.stringify(appState.items)
+        });
+
+        if (!response.ok && (response.status === 401 || response.status === 403)) {
+          const alternateHeader = keyHeader === 'X-Access-Key' ? 'X-Master-Key' : 'X-Access-Key';
+          response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              [alternateHeader]: JSONBIN_API_KEY
+            },
+            body: JSON.stringify(appState.items)
+          });
+        }
+
+        if (response.ok) {
+          updateSyncState('success', 'Guardado en la nube');
+        } else {
+          const errDetail = await response.json().catch(() => ({}));
+          console.error(`Error al guardar (HTTP ${response.status}):`, errDetail);
+          throw new Error('No se pudo guardar');
+        }
+      } catch (err) {
+        updateSyncState('error', 'Error al guardar en nube');
+      }
+    }
 
     function updateSyncState(type, message) {
       syncText.innerText = message;
