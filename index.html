@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Organizador de Actividades</title>
+  <title>Organizador de Actividades (Cloud)</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,9 +24,9 @@
             brand: {
               bg: '#ffffff',
               text: '#031e3b',
-              accent1: '#9b257d', // Purple/Magenta
-              accent2: '#ffd840', // Yellow
-              accent3: '#064383', // Deep Blue
+              accent1: '#9b257d',
+              accent2: '#ffd840',
+              accent3: '#064383',
               light: '#f8fafc',
               border: '#e2e8f0'
             }
@@ -65,30 +65,29 @@
 </head>
 <body class="min-h-screen flex flex-col bg-white text-[#031e3b]">
 
-  <!-- ==================== HEADER PRINCIPAL ==================== -->
+  <!-- HEADER -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       
-      <!-- LOGO Y TITULO -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 bg-[#064383] text-[#ffd840] rounded-xl flex items-center justify-center font-bold text-xl shadow-sm">
           <i data-lucide="folder-tree" class="w-6 h-6"></i>
         </div>
         <div>
           <h1 class="text-2xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
-          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Visualización pública</p>
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider flex items-center gap-1">
+            <span id="syncStatus" class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>
+            <span id="syncText">Cargando datos...</span>
+          </p>
         </div>
       </div>
 
-      <!-- BOTONES DE ACCIONES Y MODO ADMIN -->
       <div class="flex items-center gap-3">
-        <!-- Botón para añadir carta (solo visible si es Admin) -->
         <button id="newCardBtn" class="hidden items-center gap-2 bg-[#9b257d] hover:bg-[#801e66] text-white font-bold px-4 py-2 rounded-xl transition shadow-sm text-sm">
           <i data-lucide="plus" class="w-4 h-4"></i>
           Nueva Carta
         </button>
 
-        <!-- Botón de Estado Admin -->
         <button id="adminLoginBtn" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-[#031e3b] font-bold px-4 py-2 rounded-xl transition text-sm border border-slate-200">
           <i data-lucide="lock" class="w-4 h-4 text-[#064383]"></i>
           <span id="adminBtnText">Acceso Admin</span>
@@ -98,19 +97,15 @@
     </div>
   </header>
 
-  <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
-    <!-- MIGA DE PAN (BREADCRUMBS) -->
     <nav id="breadcrumbs" class="flex items-center gap-2 mb-8 text-base font-semibold overflow-x-auto pb-2">
-      <!-- Generado dinámicamente -->
     </nav>
 
-    <!-- BARRA SUPERIOR DE LA CARPETA ACTUAL -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
         <h2 id="currentFolderTitle" class="text-3xl font-extrabold text-[#031e3b] flex items-center gap-3">
-          <!-- Titulo actual dinámico -->
         </h2>
         <p id="currentFolderDesc" class="text-slate-600 text-base mt-1">Explora las actividades y contenidos organizados a continuación.</p>
       </div>
@@ -125,7 +120,6 @@
 
     <!-- GRID DE CARTAS -->
     <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Las cartas se insertan dinámicamente -->
     </div>
 
     <!-- MENSAJE DE LISTA VACÍA -->
@@ -139,7 +133,7 @@
 
   </main>
 
-  <!-- ==================== MODAL DE LOGIN ADMIN ==================== -->
+  <!-- MODAL ADMIN -->
   <div id="adminModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-brand-border relative text-center">
       <button id="closeAdminModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-[#031e3b] p-1 rounded-full hover:bg-slate-100">
@@ -166,7 +160,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL CREAR / EDITAR CARTA ==================== -->
+  <!-- MODAL CREAR / EDITAR CARTA -->
   <div id="cardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-brand-border relative">
       <button id="closeCardModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
@@ -235,19 +229,23 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
   <footer class="bg-white border-t border-slate-200 py-6 mt-12">
     <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-semibold">
-      Organizador de Actividades &bull; Fuente: Source Sans &bull; Colores: #031e3b, #9b257d, #ffd840, #064383
+      Organizador de Actividades Sincronizado en la Nube
     </div>
   </footer>
 
-  <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
   <script>
-    // Clave de administrador (puedes modificarla aquí)
+    // =========================================================
+    // CONFIGURACIÓN BASE DE DATOS NUBE (JSONBIN.IO)
+    // =========================================================
+    // Reemplaza estas 2 variables con las tuyas de JSONBin.io:
+    const JSONBIN_BIN_ID = "REEMPLAZAR_POR_TU_BIN_ID";
+    const JSONBIN_API_KEY = "REEMPLAZAR_POR_TU_API_KEY";
+
     const ADMIN_PASSWORD = "admin123";
 
-    // DATOS DE EJEMPLO
+    // DATOS DE RESPALDO SI LA NUBE FALLA O NO ESTÁ CONFIGURADA
     const DEFAULT_DATA = [
       {
         id: 'root-1',
@@ -259,45 +257,26 @@
         color: 'accent3'
       },
       {
-        id: 'root-2',
-        parentId: null,
-        type: 'folder',
-        title: 'Módulo 2: Práctica Avanzada',
-        category: 'Avanzado',
-        description: 'Colección de actividades prácticas para profundizar en el aprendizaje.',
-        color: 'accent1'
-      },
-      {
         id: 'sub-1',
         parentId: 'root-1',
         type: 'activity',
         title: 'Actividad 1.1: Lectura Inicial',
         category: 'Lectura',
-        description: 'Revisa el documento de introducción directamente en el enlace externo.',
+        description: 'Revisa el documento de introducción en el enlace externo.',
         color: 'accent2',
-        link: 'https://github.com'
-      },
-      {
-        id: 'sub-2',
-        parentId: 'root-1',
-        type: 'activity',
-        title: 'Actividad 1.2: Enlace a Google',
-        category: 'Recurso Web',
-        description: 'Acceso directo a la plataforma de búsqueda.',
-        color: 'accent3',
         link: 'https://google.com'
       }
     ];
 
-    // ESTADO DE LA APLICACIÓN
     let appState = {
       isAdmin: localStorage.getItem('is_admin') === 'true',
       currentParentId: null,
       folderPath: [{ id: null, title: 'Inicio' }],
-      items: JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA
+      items: []
     };
 
-    // ELEMENTOS DEL DOM
+    const syncStatus = document.getElementById('syncStatus');
+    const syncText = document.getElementById('syncText');
     const adminLoginBtn = document.getElementById('adminLoginBtn');
     const adminBtnText = document.getElementById('adminBtnText');
     const adminModal = document.getElementById('adminModal');
@@ -321,13 +300,81 @@
     const activityLinkField = document.getElementById('activityLinkField');
 
     // INICIALIZACIÓN
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
       updateAdminUI();
-      renderApp();
+      await fetchCloudData();
     });
 
-    // MODO ADMIN
+    // Cargar datos de JSONBin
+    async function fetchCloudData() {
+      if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") {
+        updateSyncState('warning', 'Modo Local (Configura JSONBin para Sincronizar)');
+        appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
+        renderApp();
+        return;
+      }
+
+      updateSyncState('loading', 'Sincronizando...');
+      try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+          headers: {
+            'X-Master-Key': JSONBIN_API_KEY
+          }
+        });
+
+        if (response.ok) {
+          const resData = await response.json();
+          appState.items = Array.isArray(resData.record) ? resData.record : DEFAULT_DATA;
+          localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
+          updateSyncState('success', 'Sincronizado con la nube');
+        } else {
+          throw new Error('Error de autenticación o de BIN');
+        }
+      } catch (err) {
+        console.warn('Error nube:', err);
+        updateSyncState('error', 'Error en Nube (Usando copia local)');
+        appState.items = JSON.parse(localStorage.getItem('my_activities_data')) || DEFAULT_DATA;
+      }
+      renderApp();
+    }
+
+    // Guardar datos en JSONBin y LocalStorage
+    async function saveData() {
+      localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
+
+      if (JSONBIN_BIN_ID === "REEMPLAZAR_POR_TU_BIN_ID") return;
+
+      updateSyncState('loading', 'Guardando en la nube...');
+      try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': JSONBIN_API_KEY
+          },
+          body: JSON.stringify(appState.items)
+        });
+
+        if (response.ok) {
+          updateSyncState('success', 'Guardado en la nube');
+        } else {
+          throw new Error('No se pudo guardar');
+        }
+      } catch (err) {
+        updateSyncState('error', 'Error al guardar en nube');
+      }
+    }
+
+    function updateSyncState(type, message) {
+      syncText.innerText = message;
+      syncStatus.className = 'inline-block w-2.5 h-2.5 rounded-full ';
+      if (type === 'loading') syncStatus.className += 'bg-yellow-400 animate-pulse';
+      else if (type === 'success') syncStatus.className += 'bg-emerald-500';
+      else if (type === 'error') syncStatus.className += 'bg-red-500';
+      else syncStatus.className += 'bg-slate-400';
+    }
+
     function updateAdminUI() {
       if (appState.isAdmin) {
         adminBtnText.innerText = 'Salir Admin';
@@ -372,12 +419,6 @@
       }
     });
 
-    // PERSISTENCIA
-    function saveData() {
-      localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
-    }
-
-    // RENDERIZADO PRINCIPAL
     function renderApp() {
       renderBreadcrumbs();
       renderCurrentFolderHeader();
@@ -455,14 +496,11 @@
 
         card.className = `bg-white rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
 
-        // Al hacer clic en la tarjeta:
         card.addEventListener('click', (e) => {
-          // Si hace clic en un botón de administración, no abre la carta
           if (e.target.closest('button')) return;
           openCard(item.id);
         });
 
-        // Controles de edición solo para administradores
         const adminControls = appState.isAdmin ? `
           <div class="flex items-center gap-1 text-slate-400" onclick="event.stopPropagation()">
             <button onclick="moveItem('${item.id}', -1)" title="Mover arriba" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
@@ -514,7 +552,6 @@
       lucide.createIcons();
     }
 
-    // ACCIONES DE CARTA
     window.openCard = function(id) {
       const item = appState.items.find(i => i.id === id);
       if (!item) return;
@@ -524,16 +561,15 @@
         appState.folderPath.push({ id: item.id, title: item.title });
         renderApp();
       } else {
-        // ABRIR DIRECTAMENTE EL ENLACE DE LA ACTIVIDAD
         if (item.link) {
           window.open(item.link, '_blank');
         } else {
-          alert('Esta actividad no tiene ningún enlace (URL) configurado.');
+          alert('Esta actividad no tiene enlace.');
         }
       }
     };
 
-    window.moveItem = function(id, direction) {
+    window.moveItem = async function(id, direction) {
       const currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
       const index = currentItems.findIndex(i => i.id === id);
       if (index === -1) return;
@@ -550,19 +586,18 @@
       appState.items[globalIdxA] = itemB;
       appState.items[globalIdxB] = itemA;
 
-      saveData();
       renderCards();
+      await saveData();
     };
 
-    window.deleteItem = function(id) {
-      if (confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
+    window.deleteItem = async function(id) {
+      if (confirm('¿Eliminar este elemento?')) {
         appState.items = appState.items.filter(i => i.id !== id && i.parentId !== id);
-        saveData();
         renderApp();
+        await saveData();
       }
     };
 
-    // MODAL DE FORMULARIO DE CARTA
     function openNewCardModal() {
       cardForm.reset();
       document.getElementById('cardId').value = '';
@@ -587,7 +622,7 @@
     closeCardModalBtn.addEventListener('click', () => cardModal.classList.add('hidden'));
     cancelCardBtn.addEventListener('click', () => cardModal.classList.add('hidden'));
 
-    cardForm.addEventListener('submit', (e) => {
+    cardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const type = document.querySelector('input[name="cardType"]:checked').value;
@@ -609,9 +644,9 @@
       };
 
       appState.items.push(newItem);
-      saveData();
       cardModal.classList.add('hidden');
       renderCards();
+      await saveData();
     });
   </script>
 </body>
