@@ -76,7 +76,7 @@
         <div>
           <h1 class="text-2xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
           <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider flex items-center gap-1">
-            <span id="syncStatus" class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>
+            <span id="syncStatus" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300"></span>
             <span id="syncText">Cargando datos...</span>
           </p>
         </div>
@@ -217,6 +217,13 @@
           <input type="url" id="cardLink" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="https://ejemplo.com">
         </div>
 
+        <div class="flex items-center gap-2 pt-2">
+          <input type="checkbox" id="cardHidden" class="w-4 h-4 text-[#064383] rounded border-slate-300">
+          <label for="cardHidden" class="text-sm font-semibold text-slate-700 cursor-pointer select-none">
+            Ocultar esta carta temporalmente a los usuarios
+          </label>
+        </div>
+
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
           <button type="button" id="cancelCardBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold transition">
             Cancelar
@@ -239,9 +246,9 @@
     // =========================================================
     // CONFIGURACIÓN BASE DE DATOS NUBE (JSONBIN.IO)
     // =========================================================
-    // Reemplaza estas 2 variables con las tuyas de JSONBin.io:
-    const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
-    const JSONBIN_API_KEY = "$2a$10$NPdNdy1Y4dGtw2hKwTXpGe/UHmngAh.Mj5y4TlOloT8n0UgeUkgFK";
+    // Coloca tus credenciales de JSONBin.io aquí:
+    const JSONBIN_BIN_ID = "REEMPLAZAR_POR_TU_BIN_ID";
+    const JSONBIN_API_KEY = "REEMPLAZAR_POR_TU_API_KEY";
 
     const ADMIN_PASSWORD = "admin123";
 
@@ -254,7 +261,8 @@
         title: 'Módulo 1: Fundamentos',
         category: 'Sección Principal',
         description: 'Aquí encontrarás todas las lecciones y actividades iniciales de formación.',
-        color: 'accent3'
+        color: 'accent3',
+        hidden: false
       },
       {
         id: 'sub-1',
@@ -264,7 +272,8 @@
         category: 'Lectura',
         description: 'Revisa el documento de introducción en el enlace externo.',
         color: 'accent2',
-        link: 'https://google.com'
+        link: 'https://google.com',
+        hidden: false
       }
     ];
 
@@ -298,8 +307,8 @@
     const cancelCardBtn = document.getElementById('cancelCardBtn');
     const cardForm = document.getElementById('cardForm');
     const activityLinkField = document.getElementById('activityLinkField');
+    const cardHiddenCheckbox = document.getElementById('cardHidden');
 
-    // INICIALIZACIÓN
     window.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
       updateAdminUI();
@@ -472,7 +481,12 @@
     function renderCards() {
       cardsGrid.innerHTML = '';
       
-      const currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
+      let currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
+
+      // Si no es admin, filtrar las cartas ocultas
+      if (!appState.isAdmin) {
+        currentItems = currentItems.filter(item => !item.hidden);
+      }
 
       if (currentItems.length === 0) {
         emptyState.classList.remove('hidden');
@@ -494,15 +508,30 @@
           badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold';
         }
 
-        card.className = `bg-white rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
+        const isHidden = !!item.hidden;
+        const opacityClass = isHidden ? 'opacity-60 bg-slate-50 border-dashed' : 'bg-white';
+
+        card.className = `${opacityClass} rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
 
         card.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
           openCard(item.id);
         });
 
+        const hiddenBadge = (appState.isAdmin && isHidden) ? `
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 flex items-center gap-1">
+            <i data-lucide="eye-off" class="w-3 h-3"></i> Oculto
+          </span>
+        ` : '';
+
         const adminControls = appState.isAdmin ? `
           <div class="flex items-center gap-1 text-slate-400" onclick="event.stopPropagation()">
+            <button onclick="toggleVisibility('${item.id}')" title="${isHidden ? 'Mostrar a usuarios' : 'Ocultar a usuarios'}" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+              <i data-lucide="${isHidden ? 'eye' : 'eye-off'}" class="w-4 h-4 ${isHidden ? 'text-amber-600' : ''}"></i>
+            </button>
+            <button onclick="editCard('${item.id}')" title="Editar carta" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+              <i data-lucide="pencil" class="w-4 h-4"></i>
+            </button>
             <button onclick="moveItem('${item.id}', -1)" title="Mover arriba" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
               <i data-lucide="arrow-up" class="w-4 h-4"></i>
             </button>
@@ -521,9 +550,12 @@
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between gap-2 mb-3">
-              <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">
-                ${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}
-              </span>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">
+                  ${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}
+                </span>
+                ${hiddenBadge}
+              </div>
               ${adminControls}
             </div>
 
@@ -564,9 +596,45 @@
         if (item.link) {
           window.open(item.link, '_blank');
         } else {
-          alert('Esta actividad no tiene enlace.');
+          alert('Esta actividad no tiene enlace especificado.');
         }
       }
+    };
+
+    // Alternar visibilidad (Ocultar/Mostrar)
+    window.toggleVisibility = async function(id) {
+      const item = appState.items.find(i => i.id === id);
+      if (!item) return;
+
+      item.hidden = !item.hidden;
+      renderCards();
+      await saveData();
+    };
+
+    // Abrir modal de edición
+    window.editCard = function(id) {
+      const item = appState.items.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('cardId').value = item.id;
+      document.getElementById('formModalTitle').innerText = 'Editar Carta';
+      document.getElementById('cardTitle').value = item.title || '';
+      document.getElementById('cardCategory').value = item.category || '';
+      document.getElementById('cardDesc').value = item.description || '';
+      document.getElementById('cardColor').value = item.color || 'accent3';
+      document.getElementById('cardLink').value = item.link || '';
+      cardHiddenCheckbox.checked = !!item.hidden;
+
+      const radioType = document.querySelector(`input[name="cardType"][value="${item.type}"]`);
+      if (radioType) radioType.checked = true;
+
+      if (item.type === 'activity') {
+        activityLinkField.classList.remove('hidden');
+      } else {
+        activityLinkField.classList.add('hidden');
+      }
+
+      cardModal.classList.remove('hidden');
     };
 
     window.moveItem = async function(id, direction) {
@@ -603,6 +671,7 @@
       document.getElementById('cardId').value = '';
       document.getElementById('formModalTitle').innerText = 'Añadir Nueva Carta';
       activityLinkField.classList.add('hidden');
+      cardHiddenCheckbox.checked = false;
       cardModal.classList.remove('hidden');
     }
 
@@ -625,25 +694,43 @@
     cardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const cardId = document.getElementById('cardId').value;
       const type = document.querySelector('input[name="cardType"]:checked').value;
       const title = document.getElementById('cardTitle').value;
       const category = document.getElementById('cardCategory').value;
       const description = document.getElementById('cardDesc').value;
       const color = document.getElementById('cardColor').value;
       const link = document.getElementById('cardLink').value;
+      const hidden = cardHiddenCheckbox.checked;
 
-      const newItem = {
-        id: 'item-' + Date.now(),
-        parentId: appState.currentParentId,
-        type,
-        title,
-        category,
-        description,
-        color,
-        link: type === 'activity' ? link : null
-      };
+      if (cardId) {
+        // Modo Edición
+        const existingItem = appState.items.find(i => i.id === cardId);
+        if (existingItem) {
+          existingItem.type = type;
+          existingItem.title = title;
+          existingItem.category = category;
+          existingItem.description = description;
+          existingItem.color = color;
+          existingItem.link = type === 'activity' ? link : null;
+          existingItem.hidden = hidden;
+        }
+      } else {
+        // Modo Nueva Carta
+        const newItem = {
+          id: 'item-' + Date.now(),
+          parentId: appState.currentParentId,
+          type,
+          title,
+          category,
+          description,
+          color,
+          link: type === 'activity' ? link : null,
+          hidden
+        };
+        appState.items.push(newItem);
+      }
 
-      appState.items.push(newItem);
       cardModal.classList.add('hidden');
       renderCards();
       await saveData();
