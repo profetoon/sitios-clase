@@ -74,7 +74,12 @@
           <i data-lucide="folder-tree" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="text-2xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
+          <div class="flex items-center gap-2">
+            <h1 id="portalTitle" class="text-2xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
+            <button id="editPortalTitleBtn" class="hidden text-slate-400 hover:text-[#064383] p-1 rounded hover:bg-slate-100" title="Editar título del portal">
+              <i data-lucide="pencil" class="w-4 h-4"></i>
+            </button>
+          </div>
           <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider flex items-center gap-1">
             <span id="syncStatus" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300"></span>
             <span id="syncText">Cargando datos...</span>
@@ -105,8 +110,14 @@
 
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
-        <h2 id="currentFolderTitle" class="text-3xl font-extrabold text-[#031e3b] flex items-center gap-3">
-        </h2>
+        <div class="flex items-center gap-2">
+          <h2 id="currentFolderTitle" class="text-3xl font-extrabold text-[#031e3b] flex items-center gap-3">
+            <!-- Título actual dinámico -->
+          </h2>
+          <button id="editHeaderBtn" class="hidden text-slate-400 hover:text-[#064383] p-1.5 rounded-lg hover:bg-slate-100" title="Editar título y descripción de esta vista">
+            <i data-lucide="pencil" class="w-5 h-5"></i>
+          </button>
+        </div>
         <p id="currentFolderDesc" class="text-slate-600 text-base mt-1">Explora las actividades y contenidos organizados a continuación.</p>
       </div>
 
@@ -132,6 +143,40 @@
     </div>
 
   </main>
+
+  <!-- MODAL EDITAR ENCABEZADO Y TÍTULOS DE SECCIÓN -->
+  <div id="textEditModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
+      <button id="closeTextModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <h3 id="textModalHeading" class="text-xl font-extrabold text-[#031e3b] mb-6">Editar Texto</h3>
+
+      <form id="textEditForm" class="space-y-4">
+        <input type="hidden" id="textEditType">
+        
+        <div>
+          <label for="textInputTitle" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Título</label>
+          <input type="text" id="textInputTitle" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm">
+        </div>
+
+        <div id="textDescContainer">
+          <label for="textInputDesc" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Descripción</label>
+          <textarea id="textInputDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+          <button type="button" id="cancelTextModalBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 bg-[#064383] hover:bg-[#031e3b] text-white font-bold rounded-xl text-sm transition shadow-sm">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- MODAL ADMIN -->
   <div id="adminModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
@@ -249,36 +294,44 @@
 
     const ADMIN_PASSWORD = "admin123";
 
-    // DATOS DE RESPALDO POR DEFECTO
-    const DEFAULT_DATA = [
-      {
-        id: 'root-1',
-        parentId: null,
-        type: 'folder',
-        title: 'Módulo 1: Fundamentos',
-        category: 'Sección Principal',
-        description: 'Aquí encontrarás todas las lecciones y actividades iniciales de formación.',
-        color: 'accent3',
-        hidden: false
+    // ESTRUCTURA BASE INICIAL CON CONFIGURACIÓN DE TÍTULOS Y CARTAS
+    const DEFAULT_DATA = {
+      config: {
+        portalTitle: "Portal de Actividades",
+        rootTitle: "Vista Principal",
+        rootDesc: "Organización de tus temas y contenidos en orden secuencial."
       },
-      {
-        id: 'sub-1',
-        parentId: 'root-1',
-        type: 'activity',
-        title: 'Actividad 1.1: Lectura Inicial',
-        category: 'Lectura',
-        description: 'Revisa el documento de introducción en el enlace externo.',
-        color: 'accent2',
-        link: 'https://google.com',
-        hidden: false
-      }
-    ];
+      items: [
+        {
+          id: 'root-1',
+          parentId: null,
+          type: 'folder',
+          title: 'Módulo 1: Fundamentos',
+          category: 'Sección Principal',
+          description: 'Aquí encontrarás todas las lecciones y actividades iniciales de formación.',
+          color: 'accent3',
+          hidden: false
+        },
+        {
+          id: 'sub-1',
+          parentId: 'root-1',
+          type: 'activity',
+          title: 'Actividad 1.1: Lectura Inicial',
+          category: 'Lectura',
+          description: 'Revisa el documento de introducción en el enlace externo.',
+          color: 'accent2',
+          link: 'https://google.com',
+          hidden: false
+        }
+      ]
+    };
 
     let appState = {
       isAdmin: localStorage.getItem('is_admin') === 'true',
       currentParentId: null,
       folderPath: [{ id: null, title: 'Inicio' }],
-      items: []
+      config: DEFAULT_DATA.config,
+      items: DEFAULT_DATA.items
     };
 
     const syncStatus = document.getElementById('syncStatus');
@@ -290,6 +343,20 @@
     const adminForm = document.getElementById('adminForm');
     const adminPasswordInput = document.getElementById('adminPassword');
     const adminError = document.getElementById('adminError');
+
+    const portalTitle = document.getElementById('portalTitle');
+    const editPortalTitleBtn = document.getElementById('editPortalTitleBtn');
+    const editHeaderBtn = document.getElementById('editHeaderBtn');
+
+    const textEditModal = document.getElementById('textEditModal');
+    const closeTextModalBtn = document.getElementById('closeTextModalBtn');
+    const cancelTextModalBtn = document.getElementById('cancelTextModalBtn');
+    const textEditForm = document.getElementById('textEditForm');
+    const textModalHeading = document.getElementById('textModalHeading');
+    const textEditType = document.getElementById('textEditType');
+    const textInputTitle = document.getElementById('textInputTitle');
+    const textInputDesc = document.getElementById('textInputDesc');
+    const textDescContainer = document.getElementById('textDescContainer');
 
     const breadcrumbs = document.getElementById('breadcrumbs');
     const currentFolderTitle = document.getElementById('currentFolderTitle');
@@ -312,11 +379,10 @@
       await fetchCloudData();
     });
 
-    // CARGAR DATOS DE JSONBIN (CON TIMEOUT DE SEGURIDAD)
+    // CARGAR DATOS
     async function fetchCloudData() {
       updateSyncState('loading', 'Sincronizando...');
 
-      // Timeout de 3.5s para no bloquear la app si hay error de red
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3500);
 
@@ -334,8 +400,8 @@
 
         if (response.ok) {
           const resData = await response.json();
-          appState.items = Array.isArray(resData.record) ? resData.record : DEFAULT_DATA;
-          localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
+          parseLoadedData(resData.record);
+          localStorage.setItem('my_activities_data', JSON.stringify({ config: appState.config, items: appState.items }));
           updateSyncState('success', 'Sincronizado con la nube');
         } else {
           throw new Error(`HTTP ${response.status}`);
@@ -345,15 +411,37 @@
         console.warn('Error/Timeout en nube, usando datos locales:', err);
         updateSyncState('error', 'Modo Local (Copia guardada)');
         const savedLocal = localStorage.getItem('my_activities_data');
-        appState.items = savedLocal ? JSON.parse(savedLocal) : DEFAULT_DATA;
+        if (savedLocal) {
+          parseLoadedData(JSON.parse(savedLocal));
+        } else {
+          parseLoadedData(DEFAULT_DATA);
+        }
       } finally {
         renderApp();
       }
     }
 
-    // GUARDAR DATOS EN NUBE Y LOCAL
+    function parseLoadedData(record) {
+      if (record && typeof record === 'object' && !Array.isArray(record)) {
+        appState.config = record.config || DEFAULT_DATA.config;
+        appState.items = Array.isArray(record.items) ? record.items : [];
+      } else if (Array.isArray(record)) {
+        appState.config = DEFAULT_DATA.config;
+        appState.items = record;
+      } else {
+        appState.config = DEFAULT_DATA.config;
+        appState.items = DEFAULT_DATA.items;
+      }
+    }
+
+    // GUARDAR DATOS
     async function saveData() {
-      localStorage.setItem('my_activities_data', JSON.stringify(appState.items));
+      const payload = {
+        config: appState.config,
+        items: appState.items
+      };
+
+      localStorage.setItem('my_activities_data', JSON.stringify(payload));
 
       updateSyncState('loading', 'Guardando...');
       try {
@@ -364,7 +452,7 @@
             'X-Access-Key': JSONBIN_API_KEY,
             'X-Master-Key': JSONBIN_API_KEY
           },
-          body: JSON.stringify(appState.items)
+          body: JSON.stringify(payload)
         });
 
         if (response.ok) {
@@ -394,12 +482,16 @@
         newCardBtn.classList.add('flex');
         mobileNewCardBtn.classList.remove('hidden');
         mobileNewCardBtn.classList.add('flex');
+        editPortalTitleBtn.classList.remove('hidden');
+        editHeaderBtn.classList.remove('hidden');
       } else {
         adminBtnText.innerText = 'Acceso Admin';
         newCardBtn.classList.add('hidden');
         newCardBtn.classList.remove('flex');
         mobileNewCardBtn.classList.add('hidden');
         mobileNewCardBtn.classList.remove('flex');
+        editPortalTitleBtn.classList.add('hidden');
+        editHeaderBtn.classList.add('hidden');
       }
     }
 
@@ -431,7 +523,65 @@
       }
     });
 
+    // EDITAR TEXTOS DE ENCABEZADO Y VISTAS
+    editPortalTitleBtn.addEventListener('click', () => {
+      textModalHeading.innerText = 'Editar Título Principal';
+      textEditType.value = 'portal';
+      textInputTitle.value = appState.config.portalTitle || 'Portal de Actividades';
+      textDescContainer.classList.add('hidden');
+      textEditModal.classList.remove('hidden');
+    });
+
+    editHeaderBtn.addEventListener('click', () => {
+      textModalHeading.innerText = 'Editar Encabezado de la Vista';
+      textEditType.value = 'folder';
+      
+      if (appState.currentParentId === null) {
+        textInputTitle.value = appState.config.rootTitle || 'Vista Principal';
+        textInputDesc.value = appState.config.rootDesc || 'Organización de tus temas y contenidos en orden secuencial.';
+      } else {
+        const folderObj = appState.items.find(i => i.id === appState.currentParentId);
+        textInputTitle.value = folderObj ? folderObj.title : '';
+        textInputDesc.value = folderObj ? (folderObj.description || '') : '';
+      }
+
+      textDescContainer.classList.remove('hidden');
+      textEditModal.classList.remove('hidden');
+    });
+
+    closeTextModalBtn.addEventListener('click', () => textEditModal.classList.add('hidden'));
+    cancelTextModalBtn.addEventListener('click', () => textEditModal.classList.add('hidden'));
+
+    textEditForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const type = textEditType.value;
+      const newTitle = textInputTitle.value.trim();
+      const newDesc = textInputDesc.value.trim();
+
+      if (type === 'portal') {
+        appState.config.portalTitle = newTitle;
+      } else if (type === 'folder') {
+        if (appState.currentParentId === null) {
+          appState.config.rootTitle = newTitle;
+          appState.config.rootDesc = newDesc;
+        } else {
+          const folderObj = appState.items.find(i => i.id === appState.currentParentId);
+          if (folderObj) {
+            folderObj.title = newTitle;
+            folderObj.description = newDesc;
+            const currentBreadcrumb = appState.folderPath[appState.folderPath.length - 1];
+            if (currentBreadcrumb) currentBreadcrumb.title = newTitle;
+          }
+        }
+      }
+
+      textEditModal.classList.add('hidden');
+      renderApp();
+      await saveData();
+    });
+
     function renderApp() {
+      portalTitle.innerText = appState.config.portalTitle || 'Portal de Actividades';
       renderBreadcrumbs();
       renderCurrentFolderHeader();
       renderCards();
@@ -471,12 +621,13 @@
     function renderCurrentFolderHeader() {
       const currentFolder = appState.folderPath[appState.folderPath.length - 1];
       if (currentFolder.id === null) {
-        currentFolderTitle.innerHTML = `<i data-lucide="grid" class="w-7 h-7 text-[#064383]"></i> Vista Principal`;
-        currentFolderDesc.innerText = 'Organización de tus temas y contenidos en orden secuencial.';
+        currentFolderTitle.innerHTML = `<i data-lucide="grid" class="w-7 h-7 text-[#064383]"></i> ${appState.config.rootTitle || 'Vista Principal'}`;
+        currentFolderDesc.innerText = appState.config.rootDesc || 'Organización de tus temas y contenidos en orden secuencial.';
       } else {
         const folderObj = appState.items.find(i => i.id === currentFolder.id);
-        currentFolderTitle.innerHTML = `<i data-lucide="folder-open" class="w-7 h-7 text-[#9b257d]"></i> ${currentFolder.title}`;
-        currentFolderDesc.innerText = folderObj ? folderObj.description : 'Contenido dentro de esta carpeta.';
+        const titleText = folderObj ? folderObj.title : currentFolder.title;
+        currentFolderTitle.innerHTML = `<i data-lucide="folder-open" class="w-7 h-7 text-[#9b257d]"></i> ${titleText}`;
+        currentFolderDesc.innerText = folderObj ? (folderObj.description || 'Contenido dentro de esta carpeta.') : 'Contenido dentro de esta carpeta.';
       }
       lucide.createIcons();
     }
