@@ -3,15 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Organizador de Actividades (Cloud)</title>
+  <title>Portal de Actividades</title>
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Google Fonts: Source Sans 3 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -21,43 +16,21 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              bg: '#ffffff',
-              text: '#031e3b',
-              accent1: '#9b257d',
-              accent2: '#ffd840',
-              accent3: '#064383',
-              light: '#f8fafc',
-              border: '#e2e8f0'
-            }
+            brand: { bg: '#ffffff', text: '#031e3b', accent1: '#9b257d', accent2: '#ffd840', accent3: '#064383', light: '#f8fafc', border: '#e2e8f0' }
           },
-          fontFamily: {
-            sans: ['"Source Sans 3"', '"Source Sans Pro"', 'sans-serif'],
-          }
+          fontFamily: { sans: ['"Source Sans 3"', '"Source Sans Pro"', 'sans-serif'] }
         }
       }
     }
   </script>
 
   <style>
-    body {
-      background-color: #ffffff;
-      color: #031e3b;
-      font-family: 'Source Sans 3', 'Source Sans Pro', sans-serif;
-    }
-
-    .card-hover {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px -8px rgba(3, 30, 59, 0.15);
-    }
-
+    body { background-color: #ffffff; color: #031e3b; font-family: 'Source Sans 3', sans-serif; }
+    .card-hover { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(3, 30, 59, 0.15); }
     .accent-bar-1 { border-top: 4px solid #9b257d; }
     .accent-bar-2 { border-top: 4px solid #ffd840; }
     .accent-bar-3 { border-top: 4px solid #064383; }
-
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #064383; border-radius: 4px; }
@@ -68,7 +41,6 @@
   <!-- HEADER -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 bg-[#064383] text-[#ffd840] rounded-xl flex items-center justify-center font-bold text-xl shadow-sm">
           <i data-lucide="folder-tree" class="w-6 h-6"></i>
@@ -76,7 +48,7 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 id="portalTitle" class="text-2xl font-extrabold text-[#031e3b] tracking-tight">Portal de Actividades</h1>
-            <button id="editPortalTitleBtn" class="hidden text-slate-400 hover:text-[#064383] p-1 rounded hover:bg-slate-100" title="Editar título del portal">
+            <button id="editPortalTitleBtn" class="hidden text-slate-400 hover:text-[#064383] p-1 rounded hover:bg-slate-100" title="Editar título">
               <i data-lucide="pencil" class="w-4 h-4"></i>
             </button>
           </div>
@@ -98,42 +70,32 @@
           <span id="adminBtnText">Acceso Admin</span>
         </button>
       </div>
-
     </div>
   </header>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    
-    <nav id="breadcrumbs" class="flex items-center gap-2 mb-8 text-base font-semibold overflow-x-auto pb-2">
-    </nav>
+    <nav id="breadcrumbs" class="flex items-center gap-2 mb-8 text-base font-semibold overflow-x-auto pb-2"></nav>
 
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
         <div class="flex items-center gap-2">
-          <h2 id="currentFolderTitle" class="text-3xl font-extrabold text-[#031e3b] flex items-center gap-3">
-            <!-- Título actual dinámico -->
-          </h2>
-          <button id="editHeaderBtn" class="hidden text-slate-400 hover:text-[#064383] p-1.5 rounded-lg hover:bg-slate-100" title="Editar título y descripción de esta vista">
+          <h2 id="currentFolderTitle" class="text-3xl font-extrabold text-[#031e3b] flex items-center gap-3"></h2>
+          <button id="editHeaderBtn" class="hidden text-slate-400 hover:text-[#064383] p-1.5 rounded-lg hover:bg-slate-100" title="Editar vista">
             <i data-lucide="pencil" class="w-5 h-5"></i>
           </button>
         </div>
-        <p id="currentFolderDesc" class="text-slate-600 text-base mt-1">Explora las actividades y contenidos organizados a continuación.</p>
+        <p id="currentFolderDesc" class="text-slate-600 text-base mt-1"></p>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button id="mobileNewCardBtn" class="hidden sm:hidden items-center gap-2 bg-[#9b257d] text-white font-bold px-4 py-2 rounded-xl text-sm">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          Nueva Carta
-        </button>
-      </div>
+      <button id="mobileNewCardBtn" class="hidden sm:hidden items-center gap-2 bg-[#9b257d] text-white font-bold px-4 py-2 rounded-xl text-sm">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Nueva Carta
+      </button>
     </div>
 
-    <!-- GRID DE CARTAS -->
-    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    </div>
+    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-    <!-- MENSAJE DE LISTA VACÍA -->
     <div id="emptyState" class="hidden text-center py-16 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 mt-4">
       <div class="w-12 h-12 bg-[#ffd840]/30 text-[#031e3b] rounded-full flex items-center justify-center mx-auto mb-3">
         <i data-lucide="layers" class="w-6 h-6"></i>
@@ -141,42 +103,7 @@
       <h3 class="text-xl font-bold text-[#031e3b]">No hay elementos aquí</h3>
       <p class="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Esta sección está vacía por el momento.</p>
     </div>
-
   </main>
-
-  <!-- MODAL EDITAR ENCABEZADO Y TÍTULOS DE SECCIÓN -->
-  <div id="textEditModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
-      <button id="closeTextModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
-        <i data-lucide="x" class="w-6 h-6"></i>
-      </button>
-
-      <h3 id="textModalHeading" class="text-xl font-extrabold text-[#031e3b] mb-6">Editar Texto</h3>
-
-      <form id="textEditForm" class="space-y-4">
-        <input type="hidden" id="textEditType">
-        
-        <div>
-          <label for="textInputTitle" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Título</label>
-          <input type="text" id="textInputTitle" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm">
-        </div>
-
-        <div id="textDescContainer">
-          <label for="textInputDesc" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Descripción</label>
-          <textarea id="textInputDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm"></textarea>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-          <button type="button" id="cancelTextModalBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold transition">
-            Cancelar
-          </button>
-          <button type="submit" class="px-5 py-2.5 bg-[#064383] hover:bg-[#031e3b] text-white font-bold rounded-xl text-sm transition shadow-sm">
-            Guardar Cambios
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   <!-- MODAL ADMIN -->
   <div id="adminModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
@@ -184,39 +111,55 @@
       <button id="closeAdminModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-[#031e3b] p-1 rounded-full hover:bg-slate-100">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
-
       <div class="w-12 h-12 bg-[#064383]/10 text-[#064383] rounded-2xl flex items-center justify-center mx-auto mb-4">
         <i data-lucide="shield-check" class="w-6 h-6"></i>
       </div>
-
       <h3 class="text-xl font-extrabold text-[#031e3b] mb-1">Acceso Administrador</h3>
-      <p class="text-xs text-slate-500 mb-6">Introduce la clave para editar contenidos.</p>
-
+      <p class="text-xs text-slate-500 mb-6">Pega tu Master Key de JSONBin para habilitar la edición.</p>
       <form id="adminForm" class="space-y-4">
-        <div>
-          <input type="password" id="adminPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm text-center" placeholder="Clave de administrador">
-        </div>
-        <p id="adminError" class="text-xs text-red-600 hidden font-semibold">Clave incorrecta</p>
-        
+        <input type="password" id="adminPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-center" placeholder="Pega tu Master Key aquí">
+        <p id="adminError" class="text-xs text-red-600 hidden font-semibold">Clave incorrecta o rechazada por la nube</p>
         <button type="submit" class="w-full bg-[#064383] hover:bg-[#031e3b] text-white font-bold py-2.5 rounded-xl transition text-sm">
-          Entrar como Admin
+          Validar e Iniciar Sesión
         </button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL CREAR / EDITAR CARTA -->
-  <div id="cardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
-      <button id="closeCardModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100 transition">
+  <!-- MODAL EDITAR TEXTOS -->
+  <div id="textEditModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
+      <button id="closeTextModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100">
         <i data-lucide="x" class="w-6 h-6"></i>
       </button>
+      <h3 id="textModalHeading" class="text-xl font-extrabold text-[#031e3b] mb-6">Editar Texto</h3>
+      <form id="textEditForm" class="space-y-4">
+        <input type="hidden" id="textEditType">
+        <div>
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Título</label>
+          <input type="text" id="textInputTitle" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
+        </div>
+        <div id="textDescContainer">
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Descripción</label>
+          <textarea id="textInputDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+          <button type="button" id="cancelTextModalBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 bg-[#064383] text-white font-bold rounded-xl text-sm">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
+  <!-- MODAL EDITAR CARTA -->
+  <div id="cardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-[#031e3b]/80 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
+      <button id="closeCardModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-[#031e3b] p-2 rounded-full hover:bg-slate-100">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
       <h3 id="formModalTitle" class="text-xl font-extrabold text-[#031e3b] mb-6">Añadir Nueva Carta</h3>
-
       <form id="cardForm" class="space-y-4">
         <input type="hidden" id="cardId">
-        
         <div>
           <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-2">Tipo de Carta</label>
           <div class="grid grid-cols-2 gap-3">
@@ -232,102 +175,63 @@
             </label>
           </div>
         </div>
-
         <div>
-          <label for="cardTitle" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Título</label>
-          <input type="text" id="cardTitle" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Ej. Módulo 1: Introducción">
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Título</label>
+          <input type="text" id="cardTitle" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
         </div>
-
         <div>
-          <label for="cardCategory" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Categoría / Subtítulo</label>
-          <input type="text" id="cardCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Ej. Teórico, Ejercicio...">
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Categoría / Subtítulo</label>
+          <input type="text" id="cardCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
         </div>
-
         <div>
-          <label for="cardDesc" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Explicación o Descripción</label>
-          <textarea id="cardDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="Escribe aquí la explicación..."></textarea>
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Descripción</label>
+          <textarea id="cardDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm"></textarea>
         </div>
-
         <div>
-          <label for="cardColor" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Color Destacado</label>
-          <select id="cardColor" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm font-semibold">
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Color Destacado</label>
+          <select id="cardColor" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold">
             <option value="accent1">Púrpura Magenta (#9b257d)</option>
             <option value="accent2">Amarillo (#ffd840)</option>
             <option value="accent3" selected>Azul (#064383)</option>
           </select>
         </div>
-
         <div id="activityLinkField" class="hidden">
-          <label for="cardLink" class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Enlace directo (URL)</label>
-          <input type="url" id="cardLink" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#064383] text-sm" placeholder="https://ejemplo.com">
+          <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Enlace directo (URL)</label>
+          <input type="url" id="cardLink" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
         </div>
-
         <div class="flex items-center gap-2 pt-2">
           <input type="checkbox" id="cardHidden" class="w-4 h-4 text-[#064383] rounded border-slate-300">
-          <label for="cardHidden" class="text-sm font-semibold text-slate-700 cursor-pointer select-none">
-            Ocultar esta carta temporalmente a los usuarios
-          </label>
+          <label for="cardHidden" class="text-sm font-semibold text-slate-700 cursor-pointer select-none">Ocultar esta carta a usuarios</label>
         </div>
-
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-          <button type="button" id="cancelCardBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold transition">
-            Cancelar
-          </button>
-          <button type="submit" class="px-5 py-2.5 bg-[#064383] hover:bg-[#031e3b] text-white font-bold rounded-xl text-sm transition shadow-sm">
-            Guardar Carta
-          </button>
+          <button type="button" id="cancelCardBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 bg-[#064383] text-white font-bold rounded-xl text-sm">Guardar Carta</button>
         </div>
       </form>
     </div>
   </div>
 
-  <footer class="bg-white border-t border-slate-200 py-6 mt-12">
-    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-semibold">
-      Organizador de Actividades Sincronizado en la Nube
-    </div>
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-400 font-semibold">
+    Organizador de Actividades Sincronizado en la Nube
   </footer>
 
   <script>
-    // CREDENCIALES DE JSONBIN.IO
     const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
-    const JSONBIN_API_KEY = "$2a$10$NPdNdy1Y4dGtw2hKwTXpGe/UHmngAh.Mj5y4TlOloT8n0UgeUkgFK";
+    
+    // PUBLIC READ-ONLY KEY (Safe to be visible in client side code)
+    const JSONBIN_PUBLIC_READ_KEY = "$2a$10$POX3spbfBkFdjZT42HRXIeo77anB18GqIlFgeKcYVdmmxOpnQKuYa";
 
-    const ADMIN_PASSWORD = "admin123";
-
-    // ESTRUCTURA BASE INICIAL CON CONFIGURACIÓN DE TÍTULOS Y CARTAS
     const DEFAULT_DATA = {
-      config: {
-        portalTitle: "Portal de Actividades",
-        rootTitle: "Vista Principal",
-        rootDesc: "Organización de tus temas y contenidos en orden secuencial."
-      },
+      config: { portalTitle: "Portal de Actividades", rootTitle: "Vista Principal", rootDesc: "Organización de tus temas en orden secuencial." },
       items: [
-        {
-          id: 'root-1',
-          parentId: null,
-          type: 'folder',
-          title: 'Módulo 1: Fundamentos',
-          category: 'Sección Principal',
-          description: 'Aquí encontrarás todas las lecciones y actividades iniciales de formación.',
-          color: 'accent3',
-          hidden: false
-        },
-        {
-          id: 'sub-1',
-          parentId: 'root-1',
-          type: 'activity',
-          title: 'Actividad 1.1: Lectura Inicial',
-          category: 'Lectura',
-          description: 'Revisa el documento de introducción en el enlace externo.',
-          color: 'accent2',
-          link: 'https://google.com',
-          hidden: false
-        }
+        { id: 'root-1', parentId: null, type: 'folder', title: 'Módulo 1: Fundamentos', category: 'Sección Principal', description: 'Lecciones iniciales.', color: 'accent3', hidden: false },
+        { id: 'sub-1', parentId: 'root-1', type: 'activity', title: 'Actividad 1.1: Lectura Inicial', category: 'Lectura', description: 'Revisa el documento.', color: 'accent2', link: 'https://google.com', hidden: false }
       ]
     };
 
     let appState = {
-      isAdmin: localStorage.getItem('is_admin') === 'true',
+      adminKey: localStorage.getItem('admin_master_key') || null,
+      get isAdmin() { return !!this.adminKey; },
       currentParentId: null,
       folderPath: [{ id: null, title: 'Inicio' }],
       config: DEFAULT_DATA.config,
@@ -379,21 +283,18 @@
       await fetchCloudData();
     });
 
-    // CARGAR DATOS
     async function fetchCloudData() {
       updateSyncState('loading', 'Sincronizando...');
-
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+      const activeKey = appState.adminKey || JSONBIN_PUBLIC_READ_KEY;
 
       try {
         const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
           method: 'GET',
           signal: controller.signal,
-          headers: {
-            'X-Access-Key': JSONBIN_API_KEY,
-            'X-Master-Key': JSONBIN_API_KEY
-          }
+          headers: { 'X-Access-Key': activeKey, 'X-Master-Key': activeKey }
         });
 
         clearTimeout(timeoutId);
@@ -402,20 +303,15 @@
           const resData = await response.json();
           parseLoadedData(resData.record);
           localStorage.setItem('my_activities_data', JSON.stringify({ config: appState.config, items: appState.items }));
-          updateSyncState('success', 'Sincronizado con la nube');
+          updateSyncState('success', 'Sincronizado');
         } else {
           throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
         clearTimeout(timeoutId);
-        console.warn('Error/Timeout en nube, usando datos locales:', err);
-        updateSyncState('error', 'Modo Local (Copia guardada)');
+        updateSyncState('error', 'Modo Local');
         const savedLocal = localStorage.getItem('my_activities_data');
-        if (savedLocal) {
-          parseLoadedData(JSON.parse(savedLocal));
-        } else {
-          parseLoadedData(DEFAULT_DATA);
-        }
+        parseLoadedData(savedLocal ? JSON.parse(savedLocal) : DEFAULT_DATA);
       } finally {
         renderApp();
       }
@@ -425,32 +321,28 @@
       if (record && typeof record === 'object' && !Array.isArray(record)) {
         appState.config = record.config || DEFAULT_DATA.config;
         appState.items = Array.isArray(record.items) ? record.items : [];
-      } else if (Array.isArray(record)) {
-        appState.config = DEFAULT_DATA.config;
-        appState.items = record;
       } else {
         appState.config = DEFAULT_DATA.config;
-        appState.items = DEFAULT_DATA.items;
+        appState.items = Array.isArray(record) ? record : DEFAULT_DATA.items;
       }
     }
 
-    // GUARDAR DATOS
     async function saveData() {
-      const payload = {
-        config: appState.config,
-        items: appState.items
-      };
+      if (!appState.adminKey) {
+        alert('Debes iniciar sesión como admin para guardar en la nube.');
+        return;
+      }
 
+      const payload = { config: appState.config, items: appState.items };
       localStorage.setItem('my_activities_data', JSON.stringify(payload));
-
       updateSyncState('loading', 'Guardando...');
+
       try {
         const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'X-Access-Key': JSONBIN_API_KEY,
-            'X-Master-Key': JSONBIN_API_KEY
+            'X-Master-Key': appState.adminKey
           },
           body: JSON.stringify(payload)
         });
@@ -461,8 +353,7 @@
           throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
-        console.warn('Error guardando en nube:', err);
-        updateSyncState('error', 'Guardado solo en Local');
+        updateSyncState('error', 'Error al guardar');
       }
     }
 
@@ -471,25 +362,20 @@
       syncStatus.className = 'inline-block w-2.5 h-2.5 rounded-full ';
       if (type === 'loading') syncStatus.className += 'bg-amber-400 animate-pulse';
       else if (type === 'success') syncStatus.className += 'bg-emerald-500';
-      else if (type === 'error') syncStatus.className += 'bg-rose-500';
-      else syncStatus.className += 'bg-slate-400';
+      else syncStatus.className += 'bg-rose-500';
     }
 
     function updateAdminUI() {
       if (appState.isAdmin) {
-        adminBtnText.innerText = 'Salir Admin';
-        newCardBtn.classList.remove('hidden');
-        newCardBtn.classList.add('flex');
-        mobileNewCardBtn.classList.remove('hidden');
-        mobileNewCardBtn.classList.add('flex');
+        adminBtnText.innerText = 'Cerrar Sesión Admin';
+        newCardBtn.classList.replace('hidden', 'flex');
+        mobileNewCardBtn.classList.replace('hidden', 'flex');
         editPortalTitleBtn.classList.remove('hidden');
         editHeaderBtn.classList.remove('hidden');
       } else {
         adminBtnText.innerText = 'Acceso Admin';
-        newCardBtn.classList.add('hidden');
-        newCardBtn.classList.remove('flex');
-        mobileNewCardBtn.classList.add('hidden');
-        mobileNewCardBtn.classList.remove('flex');
+        newCardBtn.classList.replace('flex', 'hidden');
+        mobileNewCardBtn.classList.replace('flex', 'hidden');
         editPortalTitleBtn.classList.add('hidden');
         editHeaderBtn.classList.add('hidden');
       }
@@ -497,8 +383,8 @@
 
     adminLoginBtn.addEventListener('click', () => {
       if (appState.isAdmin) {
-        appState.isAdmin = false;
-        localStorage.setItem('is_admin', 'false');
+        appState.adminKey = null;
+        localStorage.removeItem('admin_master_key');
         updateAdminUI();
         renderCards();
       } else {
@@ -510,20 +396,30 @@
 
     closeAdminModalBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
 
-    adminForm.addEventListener('submit', (e) => {
+    adminForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (adminPasswordInput.value === ADMIN_PASSWORD) {
-        appState.isAdmin = true;
-        localStorage.setItem('is_admin', 'true');
-        adminModal.classList.add('hidden');
-        updateAdminUI();
-        renderCards();
-      } else {
+      const inputKey = adminPasswordInput.value.trim();
+
+      // Validate key against JSONBin
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+          headers: { 'X-Master-Key': inputKey }
+        });
+
+        if (res.ok) {
+          appState.adminKey = inputKey;
+          localStorage.setItem('admin_master_key', inputKey);
+          adminModal.classList.add('hidden');
+          updateAdminUI();
+          renderCards();
+        } else {
+          adminError.classList.remove('hidden');
+        }
+      } catch (err) {
         adminError.classList.remove('hidden');
       }
     });
 
-    // EDITAR TEXTOS DE ENCABEZADO Y VISTAS
     editPortalTitleBtn.addEventListener('click', () => {
       textModalHeading.innerText = 'Editar Título Principal';
       textEditType.value = 'portal';
@@ -538,7 +434,7 @@
       
       if (appState.currentParentId === null) {
         textInputTitle.value = appState.config.rootTitle || 'Vista Principal';
-        textInputDesc.value = appState.config.rootDesc || 'Organización de tus temas y contenidos en orden secuencial.';
+        textInputDesc.value = appState.config.rootDesc || 'Organización de tus temas.';
       } else {
         const folderObj = appState.items.find(i => i.id === appState.currentParentId);
         textInputTitle.value = folderObj ? folderObj.title : '';
@@ -569,8 +465,6 @@
           if (folderObj) {
             folderObj.title = newTitle;
             folderObj.description = newDesc;
-            const currentBreadcrumb = appState.folderPath[appState.folderPath.length - 1];
-            if (currentBreadcrumb) currentBreadcrumb.title = newTitle;
           }
         }
       }
@@ -591,11 +485,8 @@
       breadcrumbs.innerHTML = '';
       appState.folderPath.forEach((item, index) => {
         const isLast = index === appState.folderPath.length - 1;
-        
         const btn = document.createElement('button');
-        btn.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
-          isLast ? 'bg-[#064383] text-white font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-[#031e3b]'
-        }`;
+        btn.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${isLast ? 'bg-[#064383] text-white font-bold' : 'text-slate-700 hover:bg-slate-100'}`;
         btn.innerHTML = index === 0 ? `<i data-lucide="home" class="w-4 h-4"></i> ${item.title}` : item.title;
         
         if (!isLast) {
@@ -607,7 +498,6 @@
         }
 
         breadcrumbs.appendChild(btn);
-
         if (!isLast) {
           const chevron = document.createElement('span');
           chevron.className = 'text-slate-300';
@@ -622,19 +512,17 @@
       const currentFolder = appState.folderPath[appState.folderPath.length - 1];
       if (currentFolder.id === null) {
         currentFolderTitle.innerHTML = `<i data-lucide="grid" class="w-7 h-7 text-[#064383]"></i> ${appState.config.rootTitle || 'Vista Principal'}`;
-        currentFolderDesc.innerText = appState.config.rootDesc || 'Organización de tus temas y contenidos en orden secuencial.';
+        currentFolderDesc.innerText = appState.config.rootDesc || 'Organización de tus temas en orden secuencial.';
       } else {
         const folderObj = appState.items.find(i => i.id === currentFolder.id);
-        const titleText = folderObj ? folderObj.title : currentFolder.title;
-        currentFolderTitle.innerHTML = `<i data-lucide="folder-open" class="w-7 h-7 text-[#9b257d]"></i> ${titleText}`;
-        currentFolderDesc.innerText = folderObj ? (folderObj.description || 'Contenido dentro de esta carpeta.') : 'Contenido dentro de esta carpeta.';
+        currentFolderTitle.innerHTML = `<i data-lucide="folder-open" class="w-7 h-7 text-[#9b257d]"></i> ${folderObj ? folderObj.title : currentFolder.title}`;
+        currentFolderDesc.innerText = folderObj ? (folderObj.description || 'Contenido dentro de esta carpeta.') : '';
       }
       lucide.createIcons();
     }
 
     function renderCards() {
       cardsGrid.innerHTML = '';
-      
       let currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
 
       if (!appState.isAdmin) {
@@ -650,87 +538,54 @@
 
       currentItems.forEach((item, index) => {
         const card = document.createElement('div');
-        
         let accentClass = 'accent-bar-3';
         let badgeBg = 'bg-[#064383]/10 text-[#064383]';
-        if (item.color === 'accent1') {
-          accentClass = 'accent-bar-1';
-          badgeBg = 'bg-[#9b257d]/10 text-[#9b257d]';
-        } else if (item.color === 'accent2') {
-          accentClass = 'accent-bar-2';
-          badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold';
-        }
+        if (item.color === 'accent1') { accentClass = 'accent-bar-1'; badgeBg = 'bg-[#9b257d]/10 text-[#9b257d]'; }
+        else if (item.color === 'accent2') { accentClass = 'accent-bar-2'; badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold'; }
 
         const isHidden = !!item.hidden;
-        const opacityClass = isHidden ? 'opacity-60 bg-slate-50 border-dashed' : 'bg-white';
-
-        card.className = `${opacityClass} rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
+        card.className = `${isHidden ? 'opacity-60 bg-slate-50 border-dashed' : 'bg-white'} rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
 
         card.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
           openCard(item.id);
         });
 
-        const hiddenBadge = (appState.isAdmin && isHidden) ? `
-          <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 flex items-center gap-1">
-            <i data-lucide="eye-off" class="w-3 h-3"></i> Oculto
-          </span>
-        ` : '';
+        const hiddenBadge = (appState.isAdmin && isHidden) ? `<span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 flex items-center gap-1"><i data-lucide="eye-off" class="w-3 h-3"></i> Oculto</span>` : '';
 
         const adminControls = appState.isAdmin ? `
           <div class="flex items-center gap-1 text-slate-400" onclick="event.stopPropagation()">
-            <button onclick="toggleVisibility('${item.id}')" title="${isHidden ? 'Mostrar a usuarios' : 'Ocultar a usuarios'}" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
-              <i data-lucide="${isHidden ? 'eye' : 'eye-off'}" class="w-4 h-4 ${isHidden ? 'text-amber-600' : ''}"></i>
-            </button>
-            <button onclick="editCard('${item.id}')" title="Editar carta" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
-              <i data-lucide="pencil" class="w-4 h-4"></i>
-            </button>
-            <button onclick="moveItem('${item.id}', -1)" title="Mover arriba" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
-              <i data-lucide="arrow-up" class="w-4 h-4"></i>
-            </button>
-            <button onclick="moveItem('${item.id}', 1)" title="Mover abajo" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
-              <i data-lucide="arrow-down" class="w-4 h-4"></i>
-            </button>
-            <button onclick="deleteItem('${item.id}')" title="Eliminar" class="p-1 hover:text-[#9b257d] hover:bg-slate-100 rounded ml-1">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
+            <button onclick="toggleVisibility('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="${isHidden ? 'eye' : 'eye-off'}" class="w-4 h-4"></i></button>
+            <button onclick="editCard('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+            <button onclick="moveItem('${item.id}', -1)" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
+            <button onclick="moveItem('${item.id}', 1)" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="arrow-down" class="w-4 h-4"></i></button>
+            <button onclick="deleteItem('${item.id}')" class="p-1 hover:text-[#9b257d] hover:bg-slate-100 rounded ml-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
           </div>
         ` : '';
-
-        const buttonLabel = item.type === 'folder' ? 'Abrir Carpeta' : 'Ir al Enlace';
-        const buttonIcon = item.type === 'folder' ? 'arrow-right' : 'external-link';
 
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between gap-2 mb-3">
               <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">
-                  ${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}
-                </span>
+                <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}</span>
                 ${hiddenBadge}
               </div>
               ${adminControls}
             </div>
-
             <h3 class="text-xl font-extrabold text-[#031e3b] mb-2 flex items-center gap-2">
               <i data-lucide="${item.type === 'folder' ? 'folder' : 'file-text'}" class="w-5 h-5 ${item.type === 'folder' ? 'text-[#064383]' : 'text-[#9b257d]'}"></i>
               ${item.title}
             </h3>
-
-            <p class="text-slate-600 text-base line-clamp-3 mb-6">
-              ${item.description || 'Sin descripción detallada.'}
-            </p>
+            <p class="text-slate-600 text-base line-clamp-3 mb-6">${item.description || 'Sin descripción.'}</p>
           </div>
-
           <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
             <span class="text-xs text-slate-400 font-semibold">Nº ${index + 1}</span>
-            <span class="inline-flex items-center gap-1.5 text-sm font-bold text-[#064383] group-hover:text-[#9b257d] transition">
-              ${buttonLabel}
-              <i data-lucide="${buttonIcon}" class="w-4 h-4"></i>
+            <span class="inline-flex items-center gap-1.5 text-sm font-bold text-[#064383]">
+              ${item.type === 'folder' ? 'Abrir Carpeta' : 'Ir al Enlace'}
+              <i data-lucide="${item.type === 'folder' ? 'arrow-right' : 'external-link'}" class="w-4 h-4"></i>
             </span>
           </div>
         `;
-
         cardsGrid.appendChild(card);
       });
 
@@ -740,33 +595,23 @@
     window.openCard = function(id) {
       const item = appState.items.find(i => i.id === id);
       if (!item) return;
-
       if (item.type === 'folder') {
         appState.currentParentId = item.id;
         appState.folderPath.push({ id: item.id, title: item.title });
         renderApp();
-      } else {
-        if (item.link) {
-          window.open(item.link, '_blank');
-        } else {
-          alert('Esta actividad no tiene enlace especificado.');
-        }
+      } else if (item.link) {
+        window.open(item.link, '_blank');
       }
     };
 
     window.toggleVisibility = async function(id) {
       const item = appState.items.find(i => i.id === id);
-      if (!item) return;
-
-      item.hidden = !item.hidden;
-      renderCards();
-      await saveData();
+      if (item) { item.hidden = !item.hidden; renderCards(); await saveData(); }
     };
 
     window.editCard = function(id) {
       const item = appState.items.find(i => i.id === id);
       if (!item) return;
-
       document.getElementById('cardId').value = item.id;
       document.getElementById('formModalTitle').innerText = 'Editar Carta';
       document.getElementById('cardTitle').value = item.title || '';
@@ -778,13 +623,7 @@
 
       const radioType = document.querySelector(`input[name="cardType"][value="${item.type}"]`);
       if (radioType) radioType.checked = true;
-
-      if (item.type === 'activity') {
-        activityLinkField.classList.remove('hidden');
-      } else {
-        activityLinkField.classList.add('hidden');
-      }
-
+      activityLinkField.classList.toggle('hidden', item.type !== 'activity');
       cardModal.classList.remove('hidden');
     };
 
@@ -792,18 +631,15 @@
       const currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
       const index = currentItems.findIndex(i => i.id === id);
       if (index === -1) return;
-
       const newIndex = index + direction;
       if (newIndex < 0 || newIndex >= currentItems.length) return;
 
-      const itemA = currentItems[index];
-      const itemB = currentItems[newIndex];
+      const globalIdxA = appState.items.indexOf(currentItems[index]);
+      const globalIdxB = appState.items.indexOf(currentItems[newIndex]);
 
-      const globalIdxA = appState.items.indexOf(itemA);
-      const globalIdxB = appState.items.indexOf(itemB);
-
-      appState.items[globalIdxA] = itemB;
-      appState.items[globalIdxB] = itemA;
+      const temp = appState.items[globalIdxA];
+      appState.items[globalIdxA] = appState.items[globalIdxB];
+      appState.items[globalIdxB] = temp;
 
       renderCards();
       await saveData();
@@ -828,11 +664,7 @@
 
     document.querySelectorAll('input[name="cardType"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
-        if (e.target.value === 'activity') {
-          activityLinkField.classList.remove('hidden');
-        } else {
-          activityLinkField.classList.add('hidden');
-        }
+        activityLinkField.classList.toggle('hidden', e.target.value !== 'activity');
       });
     });
 
@@ -844,7 +676,6 @@
 
     cardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const cardId = document.getElementById('cardId').value;
       const type = document.querySelector('input[name="cardType"]:checked').value;
       const title = document.getElementById('cardTitle').value;
@@ -857,27 +688,10 @@
       if (cardId) {
         const existingItem = appState.items.find(i => i.id === cardId);
         if (existingItem) {
-          existingItem.type = type;
-          existingItem.title = title;
-          existingItem.category = category;
-          existingItem.description = description;
-          existingItem.color = color;
-          existingItem.link = type === 'activity' ? link : null;
-          existingItem.hidden = hidden;
+          Object.assign(existingItem, { type, title, category, description, color, link: type === 'activity' ? link : null, hidden });
         }
       } else {
-        const newItem = {
-          id: 'item-' + Date.now(),
-          parentId: appState.currentParentId,
-          type,
-          title,
-          category,
-          description,
-          color,
-          link: type === 'activity' ? link : null,
-          hidden
-        };
-        appState.items.push(newItem);
+        appState.items.push({ id: 'item-' + Date.now(), parentId: appState.currentParentId, type, title, category, description, color, link: type === 'activity' ? link : null, hidden });
       }
 
       cardModal.classList.add('hidden');
