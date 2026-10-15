@@ -246,7 +246,7 @@
   <script>
     const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
     
-    // PUBLIC READ-ONLY KEY
+    // PUBLIC READ-ONLY ACCESS KEY
     const JSONBIN_PUBLIC_READ_KEY = "$2a$10$POX3spbfBkFdjZT42HRXIeo77anB18GqIlFgeKcYVdmmxOpnQKuYa";
 
     const DEFAULT_DATA = {
@@ -319,18 +319,22 @@
     async function fetchCloudData() {
       updateSyncState('loading', 'Sincronizando...');
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-      const activeKey = appState.adminKey || JSONBIN_PUBLIC_READ_KEY;
+      const requestHeaders = {};
+      if (appState.adminKey) {
+        // Admin Master Key requires X-Master-Key header
+        requestHeaders['X-Master-Key'] = appState.adminKey;
+      } else {
+        // Public Access Key requires X-Access-Key header
+        requestHeaders['X-Access-Key'] = JSONBIN_PUBLIC_READ_KEY;
+      }
 
       try {
         const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
           method: 'GET',
           signal: controller.signal,
-          headers: { 
-            'X-Access-Key': activeKey, 
-            'X-Master-Key': activeKey 
-          }
+          headers: requestHeaders
         });
 
         clearTimeout(timeoutId);
@@ -345,6 +349,7 @@
         }
       } catch (err) {
         clearTimeout(timeoutId);
+        console.warn('Fallback to local storage:', err);
         updateSyncState('error', 'Modo Local');
         const savedLocal = localStorage.getItem('my_activities_data');
         parseLoadedData(savedLocal ? JSON.parse(savedLocal) : DEFAULT_DATA);
@@ -422,7 +427,7 @@
         appState.adminKey = null;
         localStorage.removeItem('admin_master_key');
         updateAdminUI();
-        renderCards();
+        fetchCloudData();
       } else {
         adminPasswordInput.value = '';
         adminError.classList.add('hidden');
