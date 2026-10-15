@@ -31,6 +31,7 @@
     .accent-bar-1 { border-top: 4px solid #9b257d; }
     .accent-bar-2 { border-top: 4px solid #ffd840; }
     .accent-bar-3 { border-top: 4px solid #064383; }
+    .task-card-border { border: 2px solid #ffd840 !important; border-top: 6px solid #064383 !important; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #064383; border-radius: 4px; }
@@ -77,7 +78,7 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <nav id="breadcrumbs" class="flex items-center gap-2 mb-8 text-base font-semibold overflow-x-auto pb-2"></nav>
 
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div>
         <div class="flex items-center gap-2">
           <h2 id="currentFolderTitle" class="text-3xl font-extrabold text-[#031e3b] flex items-center gap-3"></h2>
@@ -92,6 +93,22 @@
         <i data-lucide="plus" class="w-4 h-4"></i>
         Nueva Carta
       </button>
+    </div>
+
+    <!-- BANNER DESTACADO PARA TAREAS PENDIENTES -->
+    <div id="tasksBanner" class="hidden mb-8 p-4 sm:p-5 bg-gradient-to-r from-[#ffd840]/20 via-[#ffd840]/10 to-amber-50 rounded-2xl border-2 border-[#ffd840] shadow-sm">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-[#064383] text-[#ffd840] flex items-center justify-center font-bold">
+            <i data-lucide="check-square" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-lg font-extrabold text-[#031e3b]">Tareas Pendientes en esta sección</h3>
+        </div>
+        <span id="tasksCountBadge" class="text-xs font-extrabold bg-[#064383] text-white px-2.5 py-1 rounded-full">0 Tareas</span>
+      </div>
+      <div id="tasksBannerList" class="flex flex-wrap gap-2">
+        <!-- Tarjetas dinámicas en banner -->
+      </div>
     </div>
 
     <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -199,10 +216,24 @@
           <label class="block text-xs font-bold text-[#031e3b] uppercase tracking-wider mb-1">Enlace directo (URL)</label>
           <input type="url" id="cardLink" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
         </div>
-        <div class="flex items-center gap-2 pt-2">
-          <input type="checkbox" id="cardHidden" class="w-4 h-4 text-[#064383] rounded border-slate-300">
-          <label for="cardHidden" class="text-sm font-semibold text-slate-700 cursor-pointer select-none">Ocultar esta carta a usuarios</label>
+        
+        <!-- OPCIONES CHECKBOX: OCULTAR Y MARCAR COMO TAREA -->
+        <div class="space-y-2 pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="cardTask" class="w-4 h-4 text-[#ffd840] rounded border-slate-300 focus:ring-[#ffd840]">
+            <label for="cardTask" class="text-sm font-bold text-[#031e3b] cursor-pointer select-none flex items-center gap-1.5">
+              <i data-lucide="check-square" class="w-4 h-4 text-[#064383]"></i>
+              Marcar como Tarea Pendiente (Destacar arriba)
+            </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="cardHidden" class="w-4 h-4 text-[#064383] rounded border-slate-300">
+            <label for="cardHidden" class="text-sm font-semibold text-slate-700 cursor-pointer select-none">
+              Ocultar esta carta a usuarios
+            </label>
+          </div>
         </div>
+
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
           <button type="button" id="cancelCardBtn" class="px-4 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl text-sm font-bold">Cancelar</button>
           <button type="submit" class="px-5 py-2.5 bg-[#064383] text-white font-bold rounded-xl text-sm">Guardar Carta</button>
@@ -217,15 +248,13 @@
 
   <script>
     const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
-    
-    // PUBLIC READ-ONLY KEY (Safe to be visible in client side code)
-    const JSONBIN_PUBLIC_READ_KEY = "$2a$10$POX3spbfBkFdjZT42HRXIeo77anB18GqIlFgeKcYVdmmxOpnQKuYa";
+    const JSONBIN_PUBLIC_READ_KEY = "YOUR_PUBLIC_READ_ONLY_ACCESS_KEY";
 
     const DEFAULT_DATA = {
       config: { portalTitle: "Portal de Actividades", rootTitle: "Vista Principal", rootDesc: "Organización de tus temas en orden secuencial." },
       items: [
-        { id: 'root-1', parentId: null, type: 'folder', title: 'Módulo 1: Fundamentos', category: 'Sección Principal', description: 'Lecciones iniciales.', color: 'accent3', hidden: false },
-        { id: 'sub-1', parentId: 'root-1', type: 'activity', title: 'Actividad 1.1: Lectura Inicial', category: 'Lectura', description: 'Revisa el documento.', color: 'accent2', link: 'https://google.com', hidden: false }
+        { id: 'root-1', parentId: null, type: 'folder', title: 'Módulo 1: Fundamentos', category: 'Sección Principal', description: 'Lecciones iniciales.', color: 'accent3', hidden: false, isTask: false },
+        { id: 'sub-1', parentId: 'root-1', type: 'activity', title: 'Actividad 1.1: Lectura Inicial', category: 'Lectura', description: 'Revisa el documento.', color: 'accent2', link: 'https://google.com', hidden: false, isTask: true }
       ]
     };
 
@@ -262,6 +291,10 @@
     const textInputDesc = document.getElementById('textInputDesc');
     const textDescContainer = document.getElementById('textDescContainer');
 
+    const tasksBanner = document.getElementById('tasksBanner');
+    const tasksCountBadge = document.getElementById('tasksCountBadge');
+    const tasksBannerList = document.getElementById('tasksBannerList');
+
     const breadcrumbs = document.getElementById('breadcrumbs');
     const currentFolderTitle = document.getElementById('currentFolderTitle');
     const currentFolderDesc = document.getElementById('currentFolderDesc');
@@ -276,6 +309,7 @@
     const cardForm = document.getElementById('cardForm');
     const activityLinkField = document.getElementById('activityLinkField');
     const cardHiddenCheckbox = document.getElementById('cardHidden');
+    const cardTaskCheckbox = document.getElementById('cardTask');
 
     window.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
@@ -400,7 +434,6 @@
       e.preventDefault();
       const inputKey = adminPasswordInput.value.trim();
 
-      // Validate key against JSONBin
       try {
         const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
           headers: { 'X-Master-Key': inputKey }
@@ -478,7 +511,40 @@
       portalTitle.innerText = appState.config.portalTitle || 'Portal de Actividades';
       renderBreadcrumbs();
       renderCurrentFolderHeader();
+      renderTasksBanner();
       renderCards();
+    }
+
+    function renderTasksBanner() {
+      let currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
+      if (!appState.isAdmin) {
+        currentItems = currentItems.filter(item => !item.hidden);
+      }
+
+      const taskItems = currentItems.filter(item => item.isTask);
+
+      if (taskItems.length === 0) {
+        tasksBanner.classList.add('hidden');
+        return;
+      }
+
+      tasksBanner.classList.remove('hidden');
+      tasksCountBadge.innerText = `${taskItems.length} Tarea${taskItems.length > 1 ? 's' : ''}`;
+      tasksBannerList.innerHTML = '';
+
+      taskItems.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'flex items-center gap-2 bg-white hover:bg-slate-50 text-[#031e3b] font-bold text-xs px-3 py-2 rounded-xl border border-amber-300 shadow-sm transition';
+        btn.innerHTML = `
+          <i data-lucide="${item.type === 'folder' ? 'folder' : 'file-text'}" class="w-4 h-4 text-[#064383]"></i>
+          <span>${item.title}</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#9b257d]"></i>
+        `;
+        btn.addEventListener('click', () => openCard(item.id));
+        tasksBannerList.appendChild(btn);
+      });
+
+      lucide.createIcons();
     }
 
     function renderBreadcrumbs() {
@@ -544,17 +610,30 @@
         else if (item.color === 'accent2') { accentClass = 'accent-bar-2'; badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold'; }
 
         const isHidden = !!item.hidden;
-        card.className = `${isHidden ? 'opacity-60 bg-slate-50 border-dashed' : 'bg-white'} rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
+        const isTask = !!item.isTask;
+
+        const taskClass = isTask ? 'task-card-border bg-amber-50/40 shadow-md' : (isHidden ? 'opacity-60 bg-slate-50 border-dashed' : 'bg-white');
+
+        card.className = `${taskClass} rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
 
         card.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
           openCard(item.id);
         });
 
+        const taskBadge = isTask ? `
+          <span class="text-xs font-extrabold px-2.5 py-1 rounded-md bg-[#ffd840] text-[#031e3b] flex items-center gap-1 shadow-sm">
+            <i data-lucide="bookmark" class="w-3.5 h-3.5 fill-current"></i> Tarea Pendiente
+          </span>
+        ` : '';
+
         const hiddenBadge = (appState.isAdmin && isHidden) ? `<span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 flex items-center gap-1"><i data-lucide="eye-off" class="w-3 h-3"></i> Oculto</span>` : '';
 
         const adminControls = appState.isAdmin ? `
           <div class="flex items-center gap-1 text-slate-400" onclick="event.stopPropagation()">
+            <button onclick="toggleTask('${item.id}')" title="${isTask ? 'Desmarcar Tarea' : 'Marcar como Tarea'}" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+              <i data-lucide="bookmark" class="w-4 h-4 ${isTask ? 'text-amber-500 fill-amber-400' : ''}"></i>
+            </button>
             <button onclick="toggleVisibility('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="${isHidden ? 'eye' : 'eye-off'}" class="w-4 h-4"></i></button>
             <button onclick="editCard('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="pencil" class="w-4 h-4"></i></button>
             <button onclick="moveItem('${item.id}', -1)" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
@@ -567,6 +646,7 @@
           <div>
             <div class="flex items-center justify-between gap-2 mb-3">
               <div class="flex items-center gap-1.5 flex-wrap">
+                ${taskBadge}
                 <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}</span>
                 ${hiddenBadge}
               </div>
@@ -604,9 +684,24 @@
       }
     };
 
+    window.toggleTask = async function(id) {
+      const item = appState.items.find(i => i.id === id);
+      if (item) {
+        item.isTask = !item.isTask;
+        renderTasksBanner();
+        renderCards();
+        await saveData();
+      }
+    };
+
     window.toggleVisibility = async function(id) {
       const item = appState.items.find(i => i.id === id);
-      if (item) { item.hidden = !item.hidden; renderCards(); await saveData(); }
+      if (item) { 
+        item.hidden = !item.hidden; 
+        renderTasksBanner();
+        renderCards(); 
+        await saveData(); 
+      }
     };
 
     window.editCard = function(id) {
@@ -620,6 +715,7 @@
       document.getElementById('cardColor').value = item.color || 'accent3';
       document.getElementById('cardLink').value = item.link || '';
       cardHiddenCheckbox.checked = !!item.hidden;
+      cardTaskCheckbox.checked = !!item.isTask;
 
       const radioType = document.querySelector(`input[name="cardType"][value="${item.type}"]`);
       if (radioType) radioType.checked = true;
@@ -659,6 +755,7 @@
       document.getElementById('formModalTitle').innerText = 'Añadir Nueva Carta';
       activityLinkField.classList.add('hidden');
       cardHiddenCheckbox.checked = false;
+      cardTaskCheckbox.checked = false;
       cardModal.classList.remove('hidden');
     }
 
@@ -684,18 +781,19 @@
       const color = document.getElementById('cardColor').value;
       const link = document.getElementById('cardLink').value;
       const hidden = cardHiddenCheckbox.checked;
+      const isTask = cardTaskCheckbox.checked;
 
       if (cardId) {
         const existingItem = appState.items.find(i => i.id === cardId);
         if (existingItem) {
-          Object.assign(existingItem, { type, title, category, description, color, link: type === 'activity' ? link : null, hidden });
+          Object.assign(existingItem, { type, title, category, description, color, link: type === 'activity' ? link : null, hidden, isTask });
         }
       } else {
-        appState.items.push({ id: 'item-' + Date.now(), parentId: appState.currentParentId, type, title, category, description, color, link: type === 'activity' ? link : null, hidden });
+        appState.items.push({ id: 'item-' + Date.now(), parentId: appState.currentParentId, type, title, category, description, color, link: type === 'activity' ? link : null, hidden, isTask });
       }
 
       cardModal.classList.add('hidden');
-      renderCards();
+      renderApp();
       await saveData();
     });
   </script>
