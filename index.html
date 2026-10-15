@@ -95,18 +95,23 @@
       </button>
     </div>
 
-    <!-- BANNER DESTACADO PARA TAREAS PENDIENTES -->
-    <div id="tasksBanner" class="hidden mb-8 p-4 sm:p-5 bg-gradient-to-r from-[#ffd840]/20 via-[#ffd840]/10 to-amber-50 rounded-2xl border-2 border-[#ffd840] shadow-sm">
-      <div class="flex items-center justify-between gap-3 mb-3">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-[#064383] text-[#ffd840] flex items-center justify-center font-bold">
+    <!-- BANNER DESTACADO PARA TAREAS PENDIENTES CON CARTAS DE TAMAÑO COMPLETO -->
+    <div id="tasksBanner" class="hidden mb-12 p-6 bg-gradient-to-r from-[#ffd840]/20 via-[#ffd840]/10 to-amber-50/50 rounded-3xl border-2 border-[#ffd840] shadow-sm">
+      <div class="flex items-center justify-between gap-3 mb-6">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#064383] text-[#ffd840] flex items-center justify-center font-bold shadow-sm">
             <i data-lucide="check-square" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-lg font-extrabold text-[#031e3b]">Tareas Pendientes en esta sección</h3>
+          <div>
+            <h3 class="text-xl font-extrabold text-[#031e3b]">Tareas Pendientes</h3>
+            <p class="text-xs text-slate-500 font-semibold">Actividades prioritarias para resolver en esta sección</p>
+          </div>
         </div>
-        <span id="tasksCountBadge" class="text-xs font-extrabold bg-[#064383] text-white px-2.5 py-1 rounded-full">0 Tareas</span>
+        <span id="tasksCountBadge" class="text-xs font-extrabold bg-[#064383] text-white px-3 py-1 rounded-full">0 Tareas</span>
       </div>
-      <div id="tasksBannerList" class="flex flex-wrap gap-2"></div>
+      <div id="tasksBannerGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Cartas completas generadas dinámicamente -->
+      </div>
     </div>
 
     <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -245,8 +250,6 @@
 
   <script>
     const JSONBIN_BIN_ID = "6ac7433cac6210605a1ebba8";
-    
-    // PUBLIC READ-ONLY ACCESS KEY
     const JSONBIN_PUBLIC_READ_KEY = "$2a$10$POX3spbfBkFdjZT42HRXIeo77anB18GqIlFgeKcYVdmmxOpnQKuYa";
 
     const DEFAULT_DATA = {
@@ -292,7 +295,7 @@
 
     const tasksBanner = document.getElementById('tasksBanner');
     const tasksCountBadge = document.getElementById('tasksCountBadge');
-    const tasksBannerList = document.getElementById('tasksBannerList');
+    const tasksBannerGrid = document.getElementById('tasksBannerGrid');
 
     const breadcrumbs = document.getElementById('breadcrumbs');
     const currentFolderTitle = document.getElementById('currentFolderTitle');
@@ -323,10 +326,8 @@
 
       const requestHeaders = {};
       if (appState.adminKey) {
-        // Admin Master Key requires X-Master-Key header
         requestHeaders['X-Master-Key'] = appState.adminKey;
       } else {
-        // Public Access Key requires X-Access-Key header
         requestHeaders['X-Access-Key'] = JSONBIN_PUBLIC_READ_KEY;
       }
 
@@ -522,6 +523,73 @@
       renderCards();
     }
 
+    function buildCardElement(item, index) {
+      const card = document.createElement('div');
+      let accentClass = 'accent-bar-3';
+      let badgeBg = 'bg-[#064383]/10 text-[#064383]';
+      if (item.color === 'accent1') { accentClass = 'accent-bar-1'; badgeBg = 'bg-[#9b257d]/10 text-[#9b257d]'; }
+      else if (item.color === 'accent2') { accentClass = 'accent-bar-2'; badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold'; }
+
+      const isHidden = !!item.hidden;
+      const isTask = !!item.isTask;
+
+      const taskClass = isTask ? 'task-card-border bg-amber-50/30 shadow-md' : (isHidden ? 'opacity-60 bg-slate-50 border-dashed' : 'bg-white');
+
+      card.className = `${taskClass} rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
+
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
+        openCard(item.id);
+      });
+
+      const taskBadge = isTask ? `
+        <span class="text-xs font-extrabold px-2.5 py-1 rounded-md bg-[#ffd840] text-[#031e3b] flex items-center gap-1 shadow-sm">
+          <i data-lucide="bookmark" class="w-3.5 h-3.5 fill-current"></i> Tarea Pendiente
+        </span>
+      ` : '';
+
+      const hiddenBadge = (appState.isAdmin && isHidden) ? `<span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 flex items-center gap-1"><i data-lucide="eye-off" class="w-3 h-3"></i> Oculto</span>` : '';
+
+      const adminControls = appState.isAdmin ? `
+        <div class="flex items-center gap-1 text-slate-400" onclick="event.stopPropagation()">
+          <button onclick="toggleTask('${item.id}')" title="${isTask ? 'Desmarcar Tarea' : 'Marcar como Tarea'}" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
+            <i data-lucide="bookmark" class="w-4 h-4 ${isTask ? 'text-amber-500 fill-amber-400' : ''}"></i>
+          </button>
+          <button onclick="toggleVisibility('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="${isHidden ? 'eye' : 'eye-off'}" class="w-4 h-4"></i></button>
+          <button onclick="editCard('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+          <button onclick="moveItem('${item.id}', -1)" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
+          <button onclick="moveItem('${item.id}', 1)" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="arrow-down" class="w-4 h-4"></i></button>
+          <button onclick="deleteItem('${item.id}')" class="p-1 hover:text-[#9b257d] hover:bg-slate-100 rounded ml-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        </div>
+      ` : '';
+
+      card.innerHTML = `
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              ${taskBadge}
+              <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}</span>
+              ${hiddenBadge}
+            </div>
+            ${adminControls}
+          </div>
+          <h3 class="text-xl font-extrabold text-[#031e3b] mb-2 flex items-center gap-2">
+            <i data-lucide="${item.type === 'folder' ? 'folder' : 'file-text'}" class="w-5 h-5 ${item.type === 'folder' ? 'text-[#064383]' : 'text-[#9b257d]'}"></i>
+            ${item.title}
+          </h3>
+          <p class="text-slate-600 text-base line-clamp-3 mb-6">${item.description || 'Sin descripción.'}</p>
+        </div>
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-xs text-slate-400 font-semibold">Nº ${index + 1}</span>
+          <span class="inline-flex items-center gap-1.5 text-sm font-bold text-[#064383]">
+            ${item.type === 'folder' ? 'Abrir Carpeta' : 'Ir al Enlace'}
+            <i data-lucide="${item.type === 'folder' ? 'arrow-right' : 'external-link'}" class="w-4 h-4"></i>
+          </span>
+        </div>
+      `;
+      return card;
+    }
+
     function renderTasksBanner() {
       let currentItems = appState.items.filter(item => item.parentId === appState.currentParentId);
       if (!appState.isAdmin) {
@@ -537,18 +605,10 @@
 
       tasksBanner.classList.remove('hidden');
       tasksCountBadge.innerText = `${taskItems.length} Tarea${taskItems.length > 1 ? 's' : ''}`;
-      tasksBannerList.innerHTML = '';
+      tasksBannerGrid.innerHTML = '';
 
-      taskItems.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'flex items-center gap-2 bg-white hover:bg-slate-50 text-[#031e3b] font-bold text-xs px-3 py-2 rounded-xl border border-amber-300 shadow-sm transition';
-        btn.innerHTML = `
-          <i data-lucide="${item.type === 'folder' ? 'folder' : 'file-text'}" class="w-4 h-4 text-[#064383]"></i>
-          <span>${item.title}</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#9b257d]"></i>
-        `;
-        btn.addEventListener('click', () => openCard(item.id));
-        tasksBannerList.appendChild(btn);
+      taskItems.forEach((item, index) => {
+        tasksBannerGrid.appendChild(buildCardElement(item, index));
       });
 
       lucide.createIcons();
@@ -610,70 +670,7 @@
       }
 
       currentItems.forEach((item, index) => {
-        const card = document.createElement('div');
-        let accentClass = 'accent-bar-3';
-        let badgeBg = 'bg-[#064383]/10 text-[#064383]';
-        if (item.color === 'accent1') { accentClass = 'accent-bar-1'; badgeBg = 'bg-[#9b257d]/10 text-[#9b257d]'; }
-        else if (item.color === 'accent2') { accentClass = 'accent-bar-2'; badgeBg = 'bg-[#ffd840] text-[#031e3b] font-bold'; }
-
-        const isHidden = !!item.hidden;
-        const isTask = !!item.isTask;
-
-        const taskClass = isTask ? 'task-card-border bg-amber-50/40 shadow-md' : (isHidden ? 'opacity-60 bg-slate-50 border-dashed' : 'bg-white');
-
-        card.className = `${taskClass} rounded-2xl p-6 border border-slate-200 card-hover flex flex-col justify-between relative cursor-pointer ${accentClass}`;
-
-        card.addEventListener('click', (e) => {
-          if (e.target.closest('button')) return;
-          openCard(item.id);
-        });
-
-        const taskBadge = isTask ? `
-          <span class="text-xs font-extrabold px-2.5 py-1 rounded-md bg-[#ffd840] text-[#031e3b] flex items-center gap-1 shadow-sm">
-            <i data-lucide="bookmark" class="w-3.5 h-3.5 fill-current"></i> Tarea Pendiente
-          </span>
-        ` : '';
-
-        const hiddenBadge = (appState.isAdmin && isHidden) ? `<span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700 flex items-center gap-1"><i data-lucide="eye-off" class="w-3 h-3"></i> Oculto</span>` : '';
-
-        const adminControls = appState.isAdmin ? `
-          <div class="flex items-center gap-1 text-slate-400" onclick="event.stopPropagation()">
-            <button onclick="toggleTask('${item.id}')" title="${isTask ? 'Desmarcar Tarea' : 'Marcar como Tarea'}" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded">
-              <i data-lucide="bookmark" class="w-4 h-4 ${isTask ? 'text-amber-500 fill-amber-400' : ''}"></i>
-            </button>
-            <button onclick="toggleVisibility('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="${isHidden ? 'eye' : 'eye-off'}" class="w-4 h-4"></i></button>
-            <button onclick="editCard('${item.id}')" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="pencil" class="w-4 h-4"></i></button>
-            <button onclick="moveItem('${item.id}', -1)" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
-            <button onclick="moveItem('${item.id}', 1)" class="p-1 hover:text-[#064383] hover:bg-slate-100 rounded"><i data-lucide="arrow-down" class="w-4 h-4"></i></button>
-            <button onclick="deleteItem('${item.id}')" class="p-1 hover:text-[#9b257d] hover:bg-slate-100 rounded ml-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-          </div>
-        ` : '';
-
-        card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-3">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                ${taskBadge}
-                <span class="text-xs font-bold px-2.5 py-1 rounded-md ${badgeBg} uppercase tracking-wider">${item.category || (item.type === 'folder' ? 'Carpeta' : 'Actividad')}</span>
-                ${hiddenBadge}
-              </div>
-              ${adminControls}
-            </div>
-            <h3 class="text-xl font-extrabold text-[#031e3b] mb-2 flex items-center gap-2">
-              <i data-lucide="${item.type === 'folder' ? 'folder' : 'file-text'}" class="w-5 h-5 ${item.type === 'folder' ? 'text-[#064383]' : 'text-[#9b257d]'}"></i>
-              ${item.title}
-            </h3>
-            <p class="text-slate-600 text-base line-clamp-3 mb-6">${item.description || 'Sin descripción.'}</p>
-          </div>
-          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-semibold">Nº ${index + 1}</span>
-            <span class="inline-flex items-center gap-1.5 text-sm font-bold text-[#064383]">
-              ${item.type === 'folder' ? 'Abrir Carpeta' : 'Ir al Enlace'}
-              <i data-lucide="${item.type === 'folder' ? 'arrow-right' : 'external-link'}" class="w-4 h-4"></i>
-            </span>
-          </div>
-        `;
-        cardsGrid.appendChild(card);
+        cardsGrid.appendChild(buildCardElement(item, index));
       });
 
       lucide.createIcons();
