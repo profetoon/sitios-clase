@@ -711,6 +711,9 @@ ul.f{display:flex;flex-wrap:wrap;gap:6px;padding:0;list-style:none}ul.f li{borde
 .pp{position:absolute;transform:translate(-50%,-100%);margin-top:-6px;background:var(--card,#fff);color:var(--tx,#111);border:2px solid var(--ac);border-radius:99px;padding:2px 9px;font:700 12px system-ui,sans-serif;white-space:nowrap;box-shadow:0 2px 5px #0004}
 .pp::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--ac)}
 .pp.act{background:var(--ac);color:var(--ac2);z-index:999}
+.gi{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gb{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:1.3rem;cursor:pointer;z-index:2}.gb:hover{background:rgba(0,0,0,.8)}.gl{left:10px}.gr{right:10px}
+.gc{position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.6);color:#fff;font:600 .75rem system-ui,sans-serif;padding:2px 9px;border-radius:99px;z-index:2}
 .tools{display:flex;gap:6px;flex-wrap:wrap}.tools button{padding:7px 11px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);cursor:pointer;font-size:.85rem}.tools .main{background:var(--ac);color:var(--ac2);border-color:var(--ac);font-weight:700}
 .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}.fg label{display:flex;flex-direction:column;font-size:.78rem;color:var(--mu);gap:2px}
 .fg input,.fg select,.fg textarea{padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}.fg .w{grid-column:1/-1}
@@ -767,7 +770,7 @@ const DEFAULT={
       ],
       "descripcion": "Piso reformado en el centro de Murcia. Está cerca de la catedral, de tiendas y de bares. Tiene un salón con mucha luz y una cocina equipada.",
       "color": "#e07a5f",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 2,
@@ -791,7 +794,7 @@ const DEFAULT={
       ],
       "descripcion": "Ático moderno con una terraza de 30 m². Desde el salón se ve el río Segura. El edificio tiene portero y está cerca del metro y del supermercado.",
       "color": "#3d8fb0",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 3,
@@ -815,7 +818,7 @@ const DEFAULT={
       ],
       "descripcion": "Casa para una familia grande. Tiene cuatro dormitorios, tres baños y un jardín pequeño. La escuela y el parque están a cinco minutos andando.",
       "color": "#c9a66b",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 4,
@@ -837,7 +840,7 @@ const DEFAULT={
       ],
       "descripcion": "Estudio ideal para un estudiante. Tiene una habitación con cocina y un baño. La universidad está a diez minutos en autobús.",
       "color": "#81b29a",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 5,
@@ -860,7 +863,7 @@ const DEFAULT={
       ],
       "descripcion": "Piso tranquilo en un barrio con mucha vida. Tiene tres dormitorios y un balcón con sol por la mañana. Hay un mercado en la misma calle.",
       "color": "#f2cc8f",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 6,
@@ -884,7 +887,7 @@ const DEFAULT={
       ],
       "descripcion": "Chalet grande para vivir con tranquilidad. Tiene piscina, barbacoa y un jardín con naranjos. Está a 15 minutos del centro en coche.",
       "color": "#e5989b",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 7,
@@ -906,7 +909,7 @@ const DEFAULT={
       ],
       "descripcion": "Piso sencillo y limpio. Está muy cerca de una parada de autobús. Es perfecto para una pareja o para dos compañeros de piso.",
       "color": "#6d9dc5",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 8,
@@ -929,7 +932,7 @@ const DEFAULT={
       ],
       "descripcion": "Casa con un patio para los niños y para las mascotas. Tiene cocina grande y cuatro dormitorios. Hay un parque muy cerca.",
       "color": "#b5838d",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 9,
@@ -952,7 +955,7 @@ const DEFAULT={
       ],
       "descripcion": "Casa tradicional con una terraza en el tejado. La cocina y los baños son nuevos. El pueblo es tranquilo y tiene tiendas y farmacia.",
       "color": "#e9c46a",
-      "foto": ""
+      "fotos": []
     },
     {
       "id": 10,
@@ -975,7 +978,7 @@ const DEFAULT={
       ],
       "descripcion": "Piso con tres dormitorios y dos baños. Es perfecto para compartir con amigos. Hay un autobús en la puerta y un supermercado enfrente.",
       "color": "#90be6d",
-      "foto": ""
+      "fotos": []
     }
   ]
 };
@@ -984,8 +987,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let base=[],extra=[],O=[],fav=new Set(),favOn=false,act=null,map,layer,pick=false,tmp=null;
 const COL=['#e07a5f','#3d8fb0','#c9a66b','#81b29a','#f2cc8f','#e5989b','#6d9dc5','#b5838d','#e9c46a','#90be6d'];
 const num=(v,d=0)=>isFinite(+v)&&v!==''?+v:d;
-function norm(o,x){return{id:String(o.id??('n'+Date.now())),t:o.titulo||'Sin título',tipo:o.tipo||'piso',p:num(o.precio),h:num(o.habitaciones,1),b:num(o.banos,1),m:num(o.m2),bar:o.barrio||'Murcia',lat:+o.lat,lng:+o.lng,pl:o.planta||'',e:o.certificado||'–',f:o.caracteristicas||[],d:o.descripcion||'',c:o.color||COL[Math.floor(Math.random()*COL.length)],foto:o.foto||'',op:'alquiler',x:!!x}}
-const raw=l=>({id:l.id,titulo:l.t,tipo:l.tipo,precio:l.p,habitaciones:l.h,banos:l.b,m2:l.m,barrio:l.bar,lat:l.lat,lng:l.lng,planta:l.pl,certificado:l.e,caracteristicas:l.f,descripcion:l.d,color:l.c,foto:l.foto});
+function norm(o,x){return{id:String(o.id??('n'+Date.now())),t:o.titulo||'Sin título',tipo:o.tipo||'piso',p:num(o.precio),h:num(o.habitaciones,1),b:num(o.banos,1),m:num(o.m2),bar:o.barrio||'Murcia',lat:+o.lat,lng:+o.lng,pl:o.planta||'',e:o.certificado||'–',f:o.caracteristicas||[],d:o.descripcion||'',c:o.color||COL[Math.floor(Math.random()*COL.length)],fotos:Array.isArray(o.fotos)?o.fotos.filter(Boolean):((o.fotos||o.foto)?[o.fotos||o.foto]:[]),op:'alquiler',x:!!x}}
+const raw=l=>({id:l.id,titulo:l.t,tipo:l.tipo,precio:l.p,habitaciones:l.h,banos:l.b,m2:l.m,barrio:l.bar,lat:l.lat,lng:l.lng,planta:l.pl,certificado:l.e,caracteristicas:l.f,descripcion:l.d,color:l.c,fotos:l.fotos});
 const eur=n=>n.toLocaleString('es-ES')+' €';
 const price=l=>l.op==='alquiler'?`${eur(l.p)}<small>/mes</small>`:eur(l.p);
 const short=l=>l.op==='alquiler'?l.p+' €/mes':(l.p>=1000?Math.round(l.p/1000)+' mil €':l.p+' €');
@@ -1001,7 +1004,8 @@ if(ch)s+=`<rect x="220" y="160" width="70" height="30" rx="6" fill="#52b8e8"/><r
 else s+=`<circle cx="45" cy="142" r="13" fill="#4c9a3f"/><rect x="43" y="150" width="4" height="8" fill="#6b4a2a"/><rect x="240" y="140" width="40" height="20" fill="#4c9a3f" opacity=".5"/>`}
 return `<svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${bg}${s}</svg>`}
 
-function ph(l){return `<div style="position:relative;height:100%">${art(l)}${l.foto?`<img src="${esc(l.foto)}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.remove()">`:''}</div>`}
+function ph(l,g){const f=g?l.fotos:l.fotos.slice(0,1),n=l.fotos.length;
+return `<div class="gal" style="position:relative;height:100%">${art(l)}${f.map((u,i)=>`<img class="gi" src="${esc(u)}" alt="" style="display:${i?'none':'block'}" onerror="this.style.visibility='hidden'">`).join('')}${g&&n>1?'<button class="gb gl" aria-label="Foto anterior">‹</button><button class="gb gr" aria-label="Foto siguiente">›</button><span class="gc">1 / '+n+'</span>':(n>1?'<span class="gc">📷 '+n+'</span>':'')}</div>`}
 function setAll(){O=base.concat(extra)}
 function filtered(){const t=$('#ft').value,h=+$('#fh').value,p=$('#fp').value;return O.filter(l=>(!t||l.tipo===t)&&l.h>=h&&(p==='0'||(p==='1'&&l.p<=700)||(p==='2'&&l.p<=1000)||(p==='3'&&l.p<=1500))&&(!favOn||fav.has(l.id))&&isFinite(l.lat)&&isFinite(l.lng))}
 function markers(a,fit){layer.clearLayers();a.forEach(l=>{L.marker([l.lat,l.lng],{icon:L.divIcon({className:'pinw',html:`<div class="pp${act===l.id?' act':''}">${short(l)}</div>`,iconSize:[0,0]}),zIndexOffset:act===l.id?1000:0}).on('click',()=>open_(l.id)).addTo(layer)});
@@ -1009,15 +1013,16 @@ function markers(a,fit){layer.clearLayers();a.forEach(l=>{L.marker([l.lat,l.lng]
 function render(fit){const a=filtered();$('#cnt').textContent=a.length+(a.length===1?' oferta':' ofertas');
 $('#list').innerHTML=a.length?a.map(l=>`<article class="c${act===l.id?' act':''}" data-id="${l.id}"><div class="ph">${ph(l)}</div><div class="in"><button class="heart${fav.has(l.id)?' on':''}" data-fav="${l.id}" aria-label="Favorita">${fav.has(l.id)?'♥':'♡'}</button><span class="tag">Alquiler</span><div class="price">${price(l)}</div><h3>${esc(l.t)}</h3><div class="mu">${T[l.tipo]||'Casa'} en ${esc(l.bar)}</div><div class="mu">${l.h} hab. · ${l.b} baño${l.b>1?'s':''} · ${l.m} m²</div></div></article>`).join(''):'<div class="empty">No hay ofertas con estos filtros. Prueba otra vez.</div>';
 markers(a,fit);$('#ffav').textContent=`♥ Mis favoritas (${fav.size})`;$('#ffav').classList.toggle('on',favOn)}
-function open_(id){const l=O.find(z=>z.id===id);if(!l)return;act=id;$('#md').innerHTML=`<button class="x" aria-label="Cerrar">✕</button><div class="big">${ph(l)}</div><div class="bd"><span class="tag">Alquiler</span><span class="mu">Ref. CM-${esc(String(l.id).replace(/\D/g,'').slice(-4)||l.id)}</span><h2 style="margin:6px 0 2px">${esc(l.t)}</h2><div class="mu">${T[l.tipo]||'Casa'} · ${esc(l.bar)}, Murcia${l.pl?' · '+esc(l.pl):''}</div><div class="price" style="font-size:1.6rem;margin:8px 0">${price(l)}</div>
+function open_(id){const l=O.find(z=>z.id===id);if(!l)return;act=id;$('#md').innerHTML=`<button class="x" aria-label="Cerrar">✕</button><div class="big">${ph(l,1)}</div><div class="bd"><span class="tag">Alquiler</span><span class="mu">Ref. CM-${esc(String(l.id).replace(/\D/g,'').slice(-4)||l.id)}</span><h2 style="margin:6px 0 2px">${esc(l.t)}</h2><div class="mu">${T[l.tipo]||'Casa'} · ${esc(l.bar)}, Murcia${l.pl?' · '+esc(l.pl):''}</div><div class="price" style="font-size:1.6rem;margin:8px 0">${price(l)}</div>
 <div class="grid"><div><b>${l.h}</b>habitaciones</div><div><b>${l.b}</b>baño${l.b>1?'s':''}</div><div><b>${l.m} m²</b>superficie</div><div><b>${esc(l.e)}</b>certificado energético</div><div><b>1 mes</b>de fianza</div></div>
 <p>${esc(l.d)}</p><h4 style="margin:10px 0 6px">Características</h4><ul class="f">${l.f.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
 <p><button class="cta" id="ct">Contactar con el propietario</button> <span id="ms" class="mu"></span></p></div>`;
-$('#ov').classList.add('show');$('#md .x').onclick=close_;$('#ct').onclick=()=>$('#ms').textContent='✓ Mensaje enviado (simulación)';
+$('#ov').classList.add('show');$('#md .x').onclick=close_;
+const g=$('#md .gal'),im=g?[...g.querySelectorAll('.gi')]:[];if(im.length>1){let i=0,sx=0;const go=k=>{i=(k+im.length)%im.length;im.forEach((m,j)=>m.style.display=j===i?'block':'none');g.querySelector('.gc').textContent=(i+1)+' / '+im.length};g.querySelector('.gl').onclick=()=>go(i-1);g.querySelector('.gr').onclick=()=>go(i+1);g.ontouchstart=e=>sx=e.touches[0].clientX;g.ontouchend=e=>{const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>40)go(d<0?i+1:i-1)}};$('#ct').onclick=()=>$('#ms').textContent='✓ Mensaje enviado (simulación)';
 map.panTo([l.lat,l.lng]);render()}
 function close_(){$('#ov').classList.remove('show')}
 $('#ov').onclick=e=>{if(e.target.id==='ov')close_()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){close_()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close_();if($('#ov').classList.contains('show')&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){const b=$(e.key==='ArrowLeft'?'#md .gl':'#md .gr');if(b)b.click()}});
 $('#list').onclick=e=>{const f=e.target.closest('[data-fav]');if(f){const i=f.dataset.fav;fav.has(i)?fav.delete(i):fav.add(i);render();return}const c=e.target.closest('.c');if(c)open_(c.dataset.id)};
 $('#list').onmouseover=e=>{const c=e.target.closest('.c');if(c&&act!==c.dataset.id){act=c.dataset.id;markers(filtered());document.querySelectorAll('.c').forEach(n=>n.classList.toggle('act',n===c))}};
 ['ft','fh','fp'].forEach(i=>$('#'+i).onchange=()=>render(true));
