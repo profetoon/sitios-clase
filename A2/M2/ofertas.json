@@ -21,7 +21,7 @@
       ],
       "descripcion": "Piso reformado en el centro de Murcia. Está cerca de la catedral, de tiendas y de bares. Tiene un salón con mucha luz y una cocina equipada.",
       "color": "#e07a5f",
-      "foto": [
+      "fotos": [
         "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1a.png",
         "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1b.png",
         "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1c.png", 
@@ -257,7 +257,7 @@
       ],
       "descripcion": "Piso de pruebas.",
       "color": "#90be6d",
-      "foto": [
+      "fotos": [
         "https://images.vrt.be/vrtnws_web/2022/08/17/b4e3db7e-1df8-11ed-b07d-02b7b76bf47f.jpg?width=800&height=450",
         "https://images.vrt.be/vrtnws_web/2026/11/19/72e60d98-8130-4519-b50b-46014210e0af.jpg?width=800&height=450"
       ]
