@@ -231,5 +231,28 @@
       "color": "#90be6d",
       "foto": ""
     }
+    {
+      "id": 11,
+      "titulo": "Piso prueba",
+      "tipo": "piso",
+      "precio": 100.000,
+      "habitaciones": 8,
+      "banos": 8,
+      "m2": 125,
+      "barrio": "Zarandona",
+      "lat": 38.0164,
+      "lng": -1.1165,
+      "planta": "5.ª planta",
+      "certificado": "C",
+      "caracteristicas": [
+        "Ascensor",
+        "Amueblado",
+        "Dos baños",
+        "Calefacción"
+      ],
+      "descripcion": "Piso de pruebas.",
+      "color": "#90be6d",
+      "foto": ""
+    }
   ]
 }
