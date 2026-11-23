@@ -21,7 +21,12 @@
       ],
       "descripcion": "Piso reformado en el centro de Murcia. Está cerca de la catedral, de tiendas y de bares. Tiene un salón con mucha luz y una cocina equipada.",
       "color": "#e07a5f",
-      "foto": ["https://profetoon.github.io/sitios-clase/A2/M2/images/piso1a.png","https://profetoon.github.io/sitios-clase/A2/M2/images/piso1b.png","https://profetoon.github.io/sitios-clase/A2/M2/images/piso1c.png", "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1d.png"]
+      "foto": [
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1a.png",
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1b.png",
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1c.png", 
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso1d.png"
+      ]
     },
     {
       "id": 2,
