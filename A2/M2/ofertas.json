@@ -50,7 +50,12 @@
       ],
       "descripcion": "Ático moderno con una terraza de 30 m². Desde el salón se ve el río Segura. El edificio tiene portero y está cerca del metro y del supermercado.",
       "color": "#3d8fb0",
-      "foto": "https://profetoon.github.io/sitios-clase/A2/M2/images/piso2a.png"
+      "fotos": [
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso2a.png",
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso2b.png",
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso2c.png", 
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso2d.png"
+      ]
     },
     {
       "id": 3,
@@ -74,7 +79,12 @@
       ],
       "descripcion": "Casa para una familia grande. Tiene cuatro dormitorios, tres baños y un jardín pequeño. La escuela y el parque están a cinco minutos andando.",
       "color": "#c9a66b",
-      "foto": "https://profetoon.github.io/sitios-clase/A2/M2/images/piso3a.png"
+      "fotos": [
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso3a.png",
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso3b.png",
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso3c.png", 
+        "https://profetoon.github.io/sitios-clase/A2/M2/images/piso3d.png"
+      ]
     },
     {
       "id": 4,
