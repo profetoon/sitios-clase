@@ -683,7 +683,6 @@ select{padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:v
 .fbtn.on{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
 main{display:grid;grid-template-columns:minmax(300px,1fr) minmax(320px,1.1fr);gap:16px;padding:16px;max-width:1300px;margin:auto}
 .mapwrap{position:sticky;top:8px;align-self:start;background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
-.mapwrap svg{display:block;width:100%;height:auto}
 .pin{cursor:pointer}.pin rect{fill:var(--card);stroke:var(--ac);stroke-width:1.5}.pin text{fill:var(--tx);font:700 10.5px system-ui,sans-serif;text-anchor:middle}
 .pin polygon{fill:var(--ac)}.pin.act rect{fill:var(--ac)}.pin.act text{fill:var(--ac2)}.pin.act{transform-box:fill-box}
 .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.bar b{font-size:1.05rem}
@@ -722,12 +721,6 @@ ul.f{display:flex;flex-wrap:wrap;gap:6px;padding:0;list-style:none}ul.f li{borde
 <body>
 <header>
   <div class="logo">Casa<span>Murcia</span></div>
-  <div class="tools">
-    <button class="main" id="badd">➕ Añadir oferta</button>
-    <button id="bdl">⬇ Descargar ofertas.json</button>
-    <button id="bld">📂 Cargar ofertas.json</button>
-    <input type="file" id="fin" accept=".json,application/json" hidden>
-  </div>
   <div class="note">⚠ Página ficticia para clase de español · Las ofertas no son reales</div>
 </header>
 <div class="filters">
@@ -743,28 +736,7 @@ ul.f{display:flex;flex-wrap:wrap;gap:6px;padding:0;list-style:none}ul.f li{borde
   </section>
   <aside class="mapwrap"><div id="map"></div></aside>
 </main>
-<div id="pickbar">👆 Haz clic en el mapa para elegir la ubicación</div>
 <div class="ov" id="ov"><div class="md" id="md"></div></div>
-<div class="ov" id="fov"><div class="md"><button class="x" id="fx" aria-label="Cerrar">✕</button><div class="bd">
-  <h2 style="margin:0 0 4px">Añadir una oferta</h2><div class="mu">La oferta se guarda en este navegador. Para compartirla con los alumnos, descarga el archivo ofertas.json y sustituye el original.</div>
-  <div class="fg">
-    <label class="w">Título<input id="f_t" placeholder="Piso luminoso con balcón"></label>
-    <label>Tipo<select id="f_tipo"><option value="piso">Piso</option><option value="atico">Ático</option><option value="estudio">Estudio</option><option value="casa">Casa</option><option value="chalet">Chalet</option></select></label>
-    <label>Precio (€/mes)<input id="f_p" type="number" min="0" value="700"></label>
-    <label>Habitaciones<input id="f_h" type="number" min="0" value="2"></label>
-    <label>Baños<input id="f_b" type="number" min="1" value="1"></label>
-    <label>Superficie (m²)<input id="f_m" type="number" min="1" value="70"></label>
-    <label>Barrio o pedanía<input id="f_bar" placeholder="El Palmar"></label>
-    <label>Planta<input id="f_pl" placeholder="3.ª planta"></label>
-    <label>Certificado energético<select id="f_e"><option>A</option><option>B</option><option selected>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></label>
-    <label class="w">Características (separadas por comas)<input id="f_c" placeholder="Ascensor, Terraza, Amueblado"></label>
-    <label class="w">Descripción<textarea id="f_d" rows="3" placeholder="Escribe 2 o 3 frases sencillas."></textarea></label>
-    <label class="w">Foto (enlace, opcional)<input id="f_foto" placeholder="https://..."></label>
-    <label>Latitud<input id="f_lat" type="number" step="any" placeholder="37.9840"></label>
-    <label>Longitud<input id="f_lng" type="number" step="any" placeholder="-1.1300"></label>
-  </div>
-  <p><button class="fbtn" id="fpick">📍 Elegir ubicación en el mapa</button> <button class="cta" id="fsave">Guardar oferta</button> <span id="fmsg" class="mu"></span></p>
-</div></div></div>
 <script>/*LEAFLET*//* @preserve
  * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -1040,37 +1012,23 @@ markers(a,fit);$('#ffav').textContent=`♥ Mis favoritas (${fav.size})`;$('#ffav
 function open_(id){const l=O.find(z=>z.id===id);if(!l)return;act=id;$('#md').innerHTML=`<button class="x" aria-label="Cerrar">✕</button><div class="big">${ph(l)}</div><div class="bd"><span class="tag">Alquiler</span><span class="mu">Ref. CM-${esc(String(l.id).replace(/\D/g,'').slice(-4)||l.id)}</span><h2 style="margin:6px 0 2px">${esc(l.t)}</h2><div class="mu">${T[l.tipo]||'Casa'} · ${esc(l.bar)}, Murcia${l.pl?' · '+esc(l.pl):''}</div><div class="price" style="font-size:1.6rem;margin:8px 0">${price(l)}</div>
 <div class="grid"><div><b>${l.h}</b>habitaciones</div><div><b>${l.b}</b>baño${l.b>1?'s':''}</div><div><b>${l.m} m²</b>superficie</div><div><b>${esc(l.e)}</b>certificado energético</div><div><b>1 mes</b>de fianza</div></div>
 <p>${esc(l.d)}</p><h4 style="margin:10px 0 6px">Características</h4><ul class="f">${l.f.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
-<p><button class="cta" id="ct">Contactar con el propietario</button> ${l.x?'<button class="fbtn" id="del">🗑 Eliminar oferta</button>':''} <span id="ms" class="mu"></span></p></div>`;
+<p><button class="cta" id="ct">Contactar con el propietario</button> <span id="ms" class="mu"></span></p></div>`;
 $('#ov').classList.add('show');$('#md .x').onclick=close_;$('#ct').onclick=()=>$('#ms').textContent='✓ Mensaje enviado (simulación)';
-if($('#del'))$('#del').onclick=()=>{extra=extra.filter(z=>z.id!==id);save();setAll();close_();render(true)};
 map.panTo([l.lat,l.lng]);render()}
 function close_(){$('#ov').classList.remove('show')}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(extra.map(raw)))}catch(e){}}
 $('#ov').onclick=e=>{if(e.target.id==='ov')close_()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){close_();$('#fov').classList.remove('show')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){close_()}});
 $('#list').onclick=e=>{const f=e.target.closest('[data-fav]');if(f){const i=f.dataset.fav;fav.has(i)?fav.delete(i):fav.add(i);render();return}const c=e.target.closest('.c');if(c)open_(c.dataset.id)};
 $('#list').onmouseover=e=>{const c=e.target.closest('.c');if(c&&act!==c.dataset.id){act=c.dataset.id;markers(filtered());document.querySelectorAll('.c').forEach(n=>n.classList.toggle('act',n===c))}};
 ['ft','fh','fp'].forEach(i=>$('#'+i).onchange=()=>render(true));
 $('#ffav').onclick=()=>{favOn=!favOn;render(true)};
-// --- Profesor: añadir, descargar y cargar ofertas ---
-$('#badd').onclick=()=>{$('#fmsg').textContent='';$('#fov').classList.add('show')};
-$('#fx').onclick=()=>$('#fov').classList.remove('show');
-$('#fpick').onclick=()=>{pick=true;$('#fov').classList.remove('show');$('#pickbar').style.display='block';map.getContainer().style.cursor='crosshair';$('#map').scrollIntoView({block:'center'})};
-function onMap(e){if(!pick)return;pick=false;$('#pickbar').style.display='none';map.getContainer().style.cursor='';
-$('#f_lat').value=e.latlng.lat.toFixed(5);$('#f_lng').value=e.latlng.lng.toFixed(5);if(tmp)tmp.remove();tmp=L.circleMarker(e.latlng,{radius:8,color:'#e8590c',fillOpacity:.6}).addTo(map);$('#fov').classList.add('show')}
-$('#fsave').onclick=()=>{const g=i=>$('#f_'+i).value.trim();const lat=parseFloat(g('lat')),lng=parseFloat(g('lng'));
-if(!g('t')||!isFinite(lat)||!isFinite(lng)){$('#fmsg').textContent='Falta el título o la ubicación.';return}
-const o={id:'n'+Date.now(),titulo:g('t'),tipo:g('tipo'),precio:g('p'),habitaciones:g('h'),banos:g('b'),m2:g('m'),barrio:g('bar'),lat,lng,planta:g('pl'),certificado:g('e'),caracteristicas:g('c').split(',').map(x=>x.trim()).filter(Boolean),descripcion:g('d'),foto:g('foto')};
-extra.push(norm(o,1));save();setAll();if(tmp){tmp.remove();tmp=null}['t','bar','pl','c','d','foto','lat','lng'].forEach(i=>$('#f_'+i).value='');$('#fov').classList.remove('show');render(true);open_(extra[extra.length-1].id)};
-$('#bdl').onclick=()=>{const b=new Blob([JSON.stringify({ofertas:O.map(raw)},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ofertas.json';a.click()};
-$('#bld').onclick=()=>$('#fin').click();
-$('#fin').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{const d=JSON.parse(t);base=(d.ofertas||d).map(o=>norm(o));extra=[];save();setAll();render(true)}).catch(()=>alert('No se puede leer este archivo JSON.'))};
 // --- Inicio ---
 (async function(){map=L.map('map',{scrollWheelZoom:true}).setView([37.985,-1.13],12);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright">Colaboradores de OpenStreetMap</a>'}).addTo(map);
-layer=L.layerGroup().addTo(map);map.on('click',onMap);
-let d;try{const r=await fetch('ofertas.json',{cache:'no-store'});if(!r.ok)throw 0;d=await r.json()}catch(e){d=DEFAULT}
-base=(d.ofertas||d).map(o=>norm(o));try{extra=JSON.parse(localStorage.getItem(KEY)||'[]').map(o=>norm(o,1))}catch(e){extra=[]}
+map.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');layer=L.layerGroup().addTo(map);
+let d,err='';try{const r=await fetch('ofertas.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('No se encuentra el archivo ofertas.json (error '+r.status+'). Comprueba que se llama exactamente ofertas.json y que está en la misma carpeta que index.html.');d=await r.json()}catch(e){if(location.protocol==='file:')d=DEFAULT;else err=e instanceof SyntaxError?'El archivo ofertas.json tiene un error de formato: '+e.message+'. Revisa las comas y las comillas.':e.message}
+if(err)$('.bar').insertAdjacentHTML('afterend','<div class="empty" style="color:#c92a2a;border:1px solid #c92a2a;border-radius:10px;margin-bottom:10px">⚠ '+esc(err)+'</div>');
+base=(d?(d.ofertas||d):[]).map(o=>norm(o));
 setAll();render(true)})();
 </script>
 </body>
